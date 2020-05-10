@@ -1,43 +1,30 @@
-package sir.choosepage;
-
-import javafx.fxml.FXML;
+package sir.clientSide;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
-import sir.maipage.MainController;
-import sir.maipage.ServerConnection;
-
 import java.io.FileInputStream;
 
-public class ChooseServerController {
-    
-    @FXML
-    Button mysqlButton;
-    @FXML
-    Button posgreButton;
+public class ChooseController {
 
 
-
-    public void getMySqlConn() throws Exception {
+    public void setMysqlConnection() throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/credentials.fxml"));
         Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
         tab.setContent(parent);
-        ServerConnection sc = new ServerConnection();
-        sc.setDriver("jdbc:mysql://");
-        tab.setText(mysqlButton.getText());
+        tab.setText("MySQL/");
+
     }
 
-    public void getPosGreConn() throws Exception {
+
+    public void setPostGresConnection() throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/credentials.fxml"));
         Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
         tab.setContent(parent);
-        ServerConnection sc = new ServerConnection();
-        sc.setDriver("jdbc:posgresql://");
-        tab.setText(posgreButton.getText());
+        tab.setText("PostGreSQL/");
     }
+
 
 
 

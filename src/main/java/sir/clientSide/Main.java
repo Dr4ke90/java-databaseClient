@@ -1,4 +1,4 @@
-package sir.maipage;
+package sir.clientSide;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 
 public class Main extends Application {
-   public static Stage stage;
+    public static Stage stage;
 
     public static void main(String[] args) {
         launch(args);
@@ -27,6 +27,8 @@ public class Main extends Application {
         primaryStage.show();
         primaryStage.setMinWidth(400);
         primaryStage.setMinHeight(600);
-       primaryStage.setResizable(false);
+        primaryStage.setResizable(false);
+
+
     }
 }
