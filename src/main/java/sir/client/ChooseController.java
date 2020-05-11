@@ -1,4 +1,4 @@
-package sir.clientSide;
+package sir.client;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;

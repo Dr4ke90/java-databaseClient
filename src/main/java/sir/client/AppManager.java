@@ -1,4 +1,4 @@
-package sir.clientSide;
+package sir.client;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -8,8 +8,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import sir.ServerConnection.MySqlConnection;
-import sir.ServerConnection.PostGresConnection;
+import sir.server.connection.ConnectionPool;
+import sir.server.connection.Messages;
+import sir.server.mysql.MySqlConnection;
+import sir.server.mysql.MySqlQuerys;
+import sir.server.postgres.PostGresConnection;
+import sir.server.postgres.PostGresQuerys;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -44,13 +49,14 @@ public class AppManager {
     private int tabIndex = 0;
 
 
+
     public void initialize() {
-        setSchemas();
         setTableActions();
+        setSchemas();
         setStage();
         setClock();
         createTab();
-        MySqlConnection.getInfo(name,host,user);
+        ConnectionPool.getInfo(name,host,user);
     }
 
     private void setStage() {
@@ -98,9 +104,7 @@ public class AppManager {
         textArea.setStyle("-fx-text-fill:green;-fx-font-weight:bold");
         tab.setContent(textArea);
         tab.setClosable(tabPane.getTabs().size() >= 1 );
-        tab.setOnCloseRequest(event -> {
-            tabIndex--;
-        });
+        tab.setOnCloseRequest(event -> tabIndex--);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectLast();
 
@@ -110,10 +114,10 @@ public class AppManager {
     public void send() {
         String server = MainController.tabPane.getSelectionModel().getSelectedItem().getText().toLowerCase();
         if (server.contains("mysql")) {
-            MySqlConnection ms = new MySqlConnection();
-            ms.executeQuery(listTitle, tableTitle, list, table, tabPane,tableMessage);
+            MySqlQuerys querys = new MySqlQuerys();
+            querys.executeQuery(listTitle,tableTitle,list,table,tabPane,tableMessage);
         } else if (server.contains("postgres")) {
-            PostGresConnection pg = new PostGresConnection();
+            PostGresQuerys pg = new PostGresQuerys();
             pg.executeQuery(listTitle, tableTitle, list, table, tabPane,tableMessage);
         }
 
@@ -177,10 +181,7 @@ public class AppManager {
         }
     }
 
-    private void setInfo () {
-        MySqlConnection.getInfo(name,host,user);
-        PostGresConnection.getInfo(name,host,user);
-    }
+
 
 
 

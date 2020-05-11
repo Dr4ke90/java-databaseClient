@@ -1,4 +1,4 @@
-package sir.clientSide;
+package sir.client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

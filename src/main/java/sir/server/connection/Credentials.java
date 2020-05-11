@@ -1,4 +1,4 @@
-package sir.ServerConnection;
+package sir.server.connection;
 
 public class Credentials {
 

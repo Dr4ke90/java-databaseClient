@@ -1,4 +1,5 @@
-package sir.clientSide;
+package sir.server.connection;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,7 +14,6 @@ public class Messages {
         this.time = f.format(date);
         this.mess = mess;
     }
-
 
 
     public String getTime() {

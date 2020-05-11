@@ -1,4 +1,4 @@
-package sir.clientSide;
+package sir.client;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -6,10 +6,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import sir.ServerConnection.ConnectionPool;
-import sir.ServerConnection.Credentials;
-import sir.ServerConnection.MySqlConnection;
-import sir.ServerConnection.PostGresConnection;
+import sir.server.connection.ConnectionPool;
+import sir.server.connection.Credentials;
+import sir.server.mysql.MySqlConnection;
+import sir.server.postgres.PostGresConnection;
+import sir.server.postgres.PostGresQuerys;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class CredentialsController {
 
 
     public void initialize() {
+
         setLabel();
     }
 
@@ -43,11 +45,14 @@ public class CredentialsController {
         getCredentials();
         String serverName = getTabName();
         if (serverName.contains("mysql")){
-            MySqlConnection.connect();
+            MySqlConnection mysql = new MySqlConnection();
+            mysql.connect();
             setAppPage();
         } else if (serverName.contains("postgres")) {
-            PostGresConnection.connect(user.getText(),pass.getText());
+            PostGresConnection postgres = new PostGresConnection();
+            postgres.connect();
             setAppPage();
+            PostGresQuerys.crdMemory(user.getText(),pass.getText(),ip.getText(),port.getText());
         }
     }
 

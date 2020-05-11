@@ -1,4 +1,4 @@
-package sir.clientSide;
+package sir.client;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import sir.ServerConnection.ConnectionPool;
+import sir.server.connection.ConnectionPool;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -50,31 +50,30 @@ public class MainController {
     private void setOnTabCloseRequest(Tab tab) {
         tab.setOnCloseRequest(event -> {
             if (ConnectionPool.connection != null) {
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-                confirm.setHeaderText("Connection is active! Do you close it?");
-                ButtonType buttonType = confirm.showAndWait().get();
-                if (buttonType == ButtonType.OK) {
-                    try {
-                        ConnectionPool.connection.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirm.setHeaderText("Connection is active! Do you close it?");
+                    ButtonType buttonType = confirm.showAndWait().get();
+                    if (buttonType == ButtonType.OK) {
+                        try {
+                            ConnectionPool.connection.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        if (tabPane.getTabs().size() > 1) {
+                            int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
+                            tabPane.getTabs().remove(tabIndex);
+                        }
+                    } else if (buttonType == ButtonType.CANCEL) {
+                        event.consume();
                     }
-                    if (tabPane.getTabs().size() > 1) {
-                        int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
-                        tabPane.getTabs().remove(tabIndex);
-                    }
-                } else if (buttonType == ButtonType.CANCEL) {
-                    event.consume();
                 }
-            }
         });
     }
 
-    public void setOnSelectionChanged (Tab tab) {
-        tab.setOnSelectionChanged(event -> {
-            ConnectionPool.switchConnection(tab);
-        });
 
+
+    public void setOnSelectionChanged(Tab tab) {
+        tab.setOnSelectionChanged(event -> ConnectionPool.switchConnection(tab));
     }
 
 
@@ -183,8 +182,6 @@ public class MainController {
         }
         return null;
     }
-
-
 
 
 }
