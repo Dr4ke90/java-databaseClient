@@ -4,8 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.MapValueFactory;
+import sir.server.connection.ActionsCollector;
 import sir.server.connection.Messages;
 import sir.server.connection.ConnectionPool;
+import sir.server.connection.MetaData;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,7 +22,8 @@ public class PostGresQuerys {
     protected static Statement statement = null;
     protected static ResultSet resultSet;
     protected final PostGresConnection postGresConnection;
-    protected static PostGresActions postGresActions;
+    protected static ActionsCollector actionsCollector;
+    private  static MetaData metaData;
     protected static String user;
     protected static String pass;
     protected static String ip;
@@ -29,7 +32,8 @@ public class PostGresQuerys {
 
     public PostGresQuerys() {
         postGresConnection = new PostGresConnection();
-        postGresActions = new PostGresActions();
+        actionsCollector = new ActionsCollector();
+        metaData = new MetaData();
         try {
             statement = ConnectionPool.connection.createStatement();
         } catch (SQLException e) {
@@ -83,11 +87,11 @@ public class PostGresQuerys {
         try {
             ConnectionPool.connection = DriverManager.getConnection(url + dbName, user, pass);
             list.getItems().clear();
-            PostGresConnection.getSchemas(list);
+            postGresConnection.getSchemas(list);
             listTitle.setText("Schemas");
-            postGresActions.colect("Use " + dbName);
+            actionsCollector.add("Use " + dbName);
         } catch (SQLException e) {
-            postGresActions.colect(e.getMessage());
+            actionsCollector.add(e.getMessage());
         }
     }
 
@@ -98,21 +102,21 @@ public class PostGresQuerys {
             clearList(listView, listTitle);
             postGresConnection.getTables(listView);
             listTitle.setText(schemaName);
-            postGresActions.colect("Set schema to " + schemaName);
+            actionsCollector.add("Set schema to " + schemaName);
         } catch (SQLException e) {
-            postGresActions.colect(e.getMessage());
+            actionsCollector.add(e.getMessage());
         }
     }
 
 
     private void select(Label tableTitle, TableView<Map<Integer, String>> table) {
         try {
-            PostGresConnection.resultSet = statement.executeQuery(query);
+            resultSet = statement.executeQuery(query);
             clearTable(table, tableTitle);
             getResult(table, tableTitle);
-            postGresActions.colect("Select from " + postGresConnection.getTableName());
+            actionsCollector.add("Select from " + metaData.getTableName());
         } catch (SQLException e) {
-           postGresActions.colect(e.getMessage());
+           actionsCollector.add(e.getMessage());
         }
     }
 
@@ -121,9 +125,9 @@ public class PostGresQuerys {
         if (query.contains("database")) {
             try {
                 statement.executeUpdate(query);
-                postGresActions.colect("Create database " + query.substring(16));
+                actionsCollector.add("Create database " + query.substring(16));
             } catch (SQLException e) {
-               postGresActions.colect(e.getMessage());
+               actionsCollector.add(e.getMessage());
             }
             if (listTitle.getText().equals("Databases")) {
                 PostGresConnection.getDatabases(listTitle, list, actions);
@@ -131,55 +135,55 @@ public class PostGresQuerys {
         } else if (query.contains("schema")) {
             try {
                 statement.executeQuery(query);
-                postGresActions.colect("Create schema " + query.substring(14));
+                actionsCollector.add("Create schema " + query.substring(14));
             } catch (SQLException e) {
-                postGresActions.colect(e.getMessage());
+                actionsCollector.add(e.getMessage());
             }
             if (listTitle.getText().equals("Schemas")) {
-                PostGresConnection.getSchemas(list);
+                postGresConnection.getSchemas(list);
             }
         } else if (query.contains("table")) {
             if (!listTitle.getText().equals("Schemas") && !listTitle.getText().equals("Databases")) {
                 try {
                     statement.executeUpdate(query);
                     postGresConnection.getTables(list);
-                    postGresActions.colect("Create table " + (query.substring(13, query.indexOf("("))));
+                    actionsCollector.add("Create table " + (query.substring(13, query.indexOf("("))));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             } else {
-                postGresActions.colect("No schema selected");
+                actionsCollector.add("No schema selected");
             }
         }
     }
 
     private void alter(Label tableTitle, TableView<Map<Integer, String>> table) {
         if (query.contains("table")) {
-            if (tableTitle.getText().equals(postGresConnection.getTableName())) {
+            if (tableTitle.getText().equals(metaData.getTableName())) {
                 try {
                     statement.executeUpdate(query);
-                   postGresActions.colect("Alter table " + postGresConnection.getTableName());
-                    PostGresConnection.resultSet = statement.executeQuery("select * from " + postGresConnection.getTableName());
+                   actionsCollector.add("Alter table " + metaData.getTableName());
+                    resultSet = statement.executeQuery("select * from " + metaData.getTableName());
                     getResult(table, tableTitle);
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             } else {
-                postGresActions.colect("Select table first");
+                actionsCollector.add("Select table first");
             }
         } else if (query.contains("database")) {
             try {
                 statement.executeUpdate(query);
-                postGresActions.colect("Alter database " + query.substring(16));
+                actionsCollector.add("Alter database " + query.substring(16));
             } catch (SQLException e) {
-                postGresActions.colect(e.getMessage());
+                actionsCollector.add(e.getMessage());
             }
         } else if (query.contains("schema")) {
             try {
                 statement.executeUpdate(query);
-                postGresActions.colect("Alter shcema " + query.substring(16));
+                actionsCollector.add("Alter shcema " + query.substring(16));
             } catch (SQLException e) {
-                postGresActions.colect(e.getMessage());
+                actionsCollector.add(e.getMessage());
             }
         }
     }
@@ -192,16 +196,16 @@ public class PostGresQuerys {
                 try {
                     statement.executeUpdate(query);
                     PostGresConnection.getDatabases(listTitle, list, actions);
-                    postGresActions.colect("Rename " + query.substring(7));
+                    actionsCollector.add("Rename " + query.substring(7));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             } else {
                 try {
                     statement.executeUpdate(query);
-                    postGresActions.colect("Rename " + query.substring(7));
+                    actionsCollector.add("Rename " + query.substring(7));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             }
         } else if (query.contains("schemas")) {
@@ -209,17 +213,17 @@ public class PostGresQuerys {
                 try {
                     statement.executeUpdate(query);
                     list.getItems().clear();
-                    PostGresConnection.getSchemas(list);
-                   postGresActions.colect("Rename " + query.substring(7));
+                    postGresConnection.getSchemas(list);
+                   actionsCollector.add("Rename " + query.substring(7));
                 } catch (SQLException e) {
-                   postGresActions.colect(e.getMessage());
+                   actionsCollector.add(e.getMessage());
                 }
             } else {
                 try {
                     statement.executeUpdate(query);
-                    postGresActions.colect("Rename " + query.substring(7));
+                    actionsCollector.add("Rename " + query.substring(7));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             }
         } else if (query.contains("table")) {
@@ -228,38 +232,38 @@ public class PostGresQuerys {
                     statement.executeUpdate(query);
                     list.getItems().clear();
                     postGresConnection.getTables(list);
-                    postGresActions.colect("Rename " + query.substring(7));
+                    actionsCollector.add("Rename " + query.substring(7));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             } else {
                 try {
                     statement.executeUpdate(query);
-                    postGresActions.colect("Rename " + query.substring(7));
+                    actionsCollector.add("Rename " + query.substring(7));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             }
-            if (!tableTitle.getText().equals(postGresConnection.getTableName())) {
-                tableTitle.setText(postGresConnection.getTableName());
+            if (!tableTitle.getText().equals(metaData.getTableName())) {
+                tableTitle.setText(metaData.getTableName());
             }
         }
     }
 
 
     private void truncate(Label tableTitle, TableView<Map<Integer, String>> table) {
-        if (tableTitle.getText().equals(postGresConnection.getTableName())) {
+        if (tableTitle.getText().equals(metaData.getTableName())) {
             try {
                 statement.executeUpdate(query);
-                postGresActions.colect("Truncate executate");
-                PostGresConnection.resultSet = statement.executeQuery("select * from " + postGresConnection.getTableName());
+                actionsCollector.add("Truncate executate");
+                resultSet = statement.executeQuery("select * from " + metaData.getTableName());
                 clearTable(table, tableTitle);
                 getResult(table, tableTitle);
             } catch (SQLException e) {
-                postGresActions.colect(e.getMessage());
+                actionsCollector.add(e.getMessage());
             }
         } else {
-            postGresActions.colect("Select table first");
+            actionsCollector.add("Select table first");
         }
     }
 
@@ -271,16 +275,16 @@ public class PostGresQuerys {
                     statement.executeUpdate(query);
                     clearList(list, listTitle);
                     PostGresConnection.getDatabases(listTitle, list, actions);
-                    postGresActions.colect("Drop database " + query.substring(14));
+                    actionsCollector.add("Drop database " + query.substring(14));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             } else {
                 try {
                     statement.executeUpdate(query);
-                    postGresActions.colect("Drop database " + query.substring(14));
+                    actionsCollector.add("Drop database " + query.substring(14));
                 } catch (SQLException e) {
-                  postGresActions.colect(e.getMessage());
+                  actionsCollector.add(e.getMessage());
                 }
             }
         } else if (query.contains("schemas")) {
@@ -288,17 +292,17 @@ public class PostGresQuerys {
                 try {
                     statement.executeUpdate(query);
                     list.getItems().clear();
-                    PostGresConnection.getSchemas(list);
-                    postGresActions.colect("Drop schema " + query.substring(12));
+                    postGresConnection.getSchemas(list);
+                    actionsCollector.add("Drop schema " + query.substring(12));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             } else {
                 try {
                     statement.executeUpdate(query);
-                    postGresActions.colect("Drop schema " + query.substring(12));
+                    actionsCollector.add("Drop schema " + query.substring(12));
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             }
         } else if (query.contains("table")) {
@@ -307,41 +311,41 @@ public class PostGresQuerys {
                     statement.executeUpdate(query);
                     list.getItems().clear();
                     postGresConnection.getTables(list);
-                    postGresActions.colect("Drop table " + postGresConnection.getTableName());
+                    actionsCollector.add("Drop table " + metaData.getTableName());
                 } catch (SQLException e) {
-                   postGresActions.colect(e.getMessage());
+                   actionsCollector.add(e.getMessage());
                 }
             } else {
                 try {
                     statement.executeUpdate(query);
-                    postGresActions.colect("Drop table " + postGresConnection.getTableName());
+                    actionsCollector.add("Drop table " + metaData.getTableName());
                 } catch (SQLException e) {
-                    postGresActions.colect(e.getMessage());
+                    actionsCollector.add(e.getMessage());
                 }
             }
-            if (tableTitle.getText().equals(postGresConnection.getTableName())) {
+            if (tableTitle.getText().equals(metaData.getTableName())) {
                 clearTable(table, tableTitle);
             }
         } else {
-            postGresActions.colect("Syntax error");
+            actionsCollector.add("Syntax error");
         }
     }
 
 
     private void update(Label tableTitle, TableView<Map<Integer, String>> table) {
-        if (tableTitle.getText().equals(postGresConnection.getTableName())) {
+        if (tableTitle.getText().equals(metaData.getTableName())) {
             try {
                 statement.executeUpdate(query);
                 clearTable(table, tableTitle);
-                PostGresConnection.resultSet = statement.executeQuery("select * from " + postGresConnection.getTableName());
+                resultSet = statement.executeQuery("select * from " + metaData.getTableName());
                 clearTable(table, tableTitle);
                 getResult(table, tableTitle);
-                postGresActions.colect("Update executate");
+                actionsCollector.add("Update executate");
             } catch (SQLException e) {
-              postGresActions.colect(e.getMessage());
+              actionsCollector.add(e.getMessage());
             }
         } else {
-            postGresActions.colect("Select table first");
+            actionsCollector.add("Select table first");
         }
     }
 
@@ -350,28 +354,28 @@ public class PostGresQuerys {
         if (query.contains("databases")) {
             if (!listTitle.getText().equals("Databases")) {
                 PostGresConnection.getDatabases(listTitle, list, actions);
-                postGresActions.colect("Database has been succesfuly loaded");
+                actionsCollector.add("Database has been succesfuly loaded");
             } else {
-                postGresActions.colect("Database are already listed");
+                actionsCollector.add("Database are already listed");
             }
         } else if (query.contains("schemas")) {
             if (!listTitle.getText().equals("Schemas")) {
                 list.getItems().clear();
-                PostGresConnection.getSchemas(list);
+                postGresConnection.getSchemas(list);
                 listTitle.setText("Schemas");
-                postGresActions.colect("Schemas has been succesfuly loaded");
+                actionsCollector.add("Schemas has been succesfuly loaded");
             } else {
-                postGresActions.colect("Schemas are already listed");
+                actionsCollector.add("Schemas are already listed");
             }
         } else if (query.contains("tables")) {
             if (listTitle.getText().equals("Databases") || listTitle.getText().equals("Schemas")) {
                 list.getItems().clear();
                 postGresConnection.getTables(list);
                 listTitle.setText("Tables");
-               postGresActions.colect("Tables has been succesfuly loaded");
+               actionsCollector.add("Tables has been succesfuly loaded");
             }
         } else {
-            postGresActions.colect("Tables are already listed");
+            actionsCollector.add("Tables are already listed");
         }
     }
 
@@ -396,9 +400,9 @@ public class PostGresQuerys {
                 alldata.add(dataRow);
             }
             table.setItems(alldata);
-            tableTitle.setText(postGresConnection.getTableName());
+            tableTitle.setText(metaData.getTableName());
         } catch (SQLException e) {
-            postGresActions.colect(e.getMessage());
+            actionsCollector.add(e.getMessage());
         }
     }
 

@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import sir.server.connection.ConnectionPool;
 import sir.server.connection.Messages;
-import sir.server.mysql.MySqlConnection;
 import sir.server.mysql.MySqlQuerys;
+import sir.server.oracle.OracleQuerys;
 import sir.server.postgres.PostGresConnection;
 import sir.server.postgres.PostGresQuerys;
 
@@ -84,9 +84,12 @@ public class AppManager {
 
 
     public void setSchemas() {
-        MySqlConnection.getSchemas(listTitle, list,tableMessage);
-        PostGresConnection.getDatabases(listTitle, list,tableMessage);
-    }
+            MySqlQuerys mySqlQuerys = new MySqlQuerys();
+            mySqlQuerys.show(list, tableMessage, listTitle);
+            OracleQuerys oracle = new OracleQuerys();
+            oracle.showDatabases(list,tableMessage);
+            PostGresConnection.getDatabases(listTitle, list, tableMessage);
+        }
 
     public void setTableActions() {
         TableColumn date = tableMessage.getColumns().get(0);
@@ -119,6 +122,9 @@ public class AppManager {
         } else if (server.contains("postgres")) {
             PostGresQuerys pg = new PostGresQuerys();
             pg.executeQuery(listTitle, tableTitle, list, table, tabPane,tableMessage);
+        } else if (server.contains("oracle")) {
+            OracleQuerys oracle = new OracleQuerys();
+            oracle.executeQuery(listTitle,tableTitle,list,table,tabPane,tableMessage);
         }
 
 

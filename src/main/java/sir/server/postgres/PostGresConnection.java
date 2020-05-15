@@ -2,41 +2,64 @@ package sir.server.postgres;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
+import sir.server.connection.ActionsCollector;
 import sir.server.connection.ConnectionPool;
 import sir.server.connection.Credentials;
 import sir.client.CredentialsController;
 import sir.client.MainController;
 import sir.server.connection.Messages;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
 
 
 public class PostGresConnection {
 
 
-    protected static ResultSet resultSet;
-    protected static PostGresActions postGresActions;
+    protected static ActionsCollector actionsCollector;
 
 
    public PostGresConnection () {
-        postGresActions = new PostGresActions();
+        actionsCollector = new ActionsCollector();
     }
 
 
 
-    public void connect() {
+    public void connect(String name) {
         final String url = "jdbc:postgresql://" + Credentials.getIp() + ":" + Credentials.getPort() + "/";
         try {
             Connection connection = DriverManager.getConnection(url, Credentials.getUser(), Credentials.getPass());
-            ConnectionPool.getConnection(connection);
+            ConnectionPool.add(connection);
             ConnectionPool.connection = connection;
-            postGresActions.colect("Connection Succesfull");
+            actionsCollector.createCollector();
+            if (connection != null) {
+                actionsCollector.add("Connection Succesfull");
+                setAppPage(name);
+            }
         } catch (SQLException e) {
             CredentialsController.getError("Access Denied");
             System.out.println(e.getMessage());
         }
     }
+
+    private void setAppPage(String name) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/aplication.fxml"));
+            Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
+            tab.setText(tab.getText() + name);
+            tab.setContent(parent);
+        }catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
 
     public static void getDatabases(Label listTitle, ListView<String> listView, TableView<Messages> actions) {
         String serverName = MainController.tabPane.getSelectionModel().getSelectedItem().getText().toLowerCase();
@@ -51,25 +74,25 @@ public class PostGresConnection {
                 }
                 listView.setItems(result);
                 listTitle.setText("Databases");
-                actions.setItems(PostGresActions.actions);
+                actions.setItems(ActionsCollector.collector);
             } catch (SQLException e) {
-                postGresActions.colect(e.getMessage());
+                actionsCollector.add(e.getMessage());
             }
         }
     }
 
 
-    protected static void getSchemas(ListView<String> listView) {
+    protected void getSchemas(ListView<String> listView) {
         try {
             Statement statement = ConnectionPool.connection.createStatement();
-            resultSet = statement.executeQuery("select schema_name from information_schema.schemata");
+            PostGresQuerys.resultSet = statement.executeQuery("select schema_name from information_schema.schemata");
             final ObservableList<String> result = FXCollections.observableArrayList();
-            while (resultSet.next()) {
-                result.add(resultSet.getString(1) + "\n");
+            while (PostGresQuerys.resultSet.next()) {
+                result.add(PostGresQuerys.resultSet.getString(1) + "\n");
             }
             listView.setItems(result);
         } catch (SQLException e) {
-            postGresActions.colect(e.getMessage());
+            actionsCollector.add(e.getMessage());
         }
     }
 
@@ -77,27 +100,18 @@ public class PostGresConnection {
     protected void getTables(ListView<String> listView) {
         try {
             Statement statement = ConnectionPool.connection.createStatement();
-            resultSet = statement.executeQuery("select tablename from pg_tables where schemaname='public';");
+           PostGresQuerys.resultSet = statement.executeQuery("select tablename from pg_tables where schemaname='public';");
             final ObservableList<String> result = FXCollections.observableArrayList();
-            while (resultSet.next()) {
-                result.add(resultSet.getString(1) + "\n");
+            while (PostGresQuerys.resultSet.next()) {
+                result.add(PostGresQuerys.resultSet.getString(1) + "\n");
             }
             listView.setItems(result);
         } catch (SQLException e) {
-            postGresActions.colect(e.getMessage());
+            actionsCollector.add(e.getMessage());
         }
 
     }
 
 
-    protected String getTableName() {
-        try {
-            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-            return resultSetMetaData.getTableName(1);
-        } catch (SQLException e) {
-            postGresActions.colect(e.getMessage());
-        }
-        return null;
-    }
 
 }

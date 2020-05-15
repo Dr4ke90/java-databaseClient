@@ -11,19 +11,20 @@ import java.util.Map;
 public class ConnectionPool {
 
     public static Connection connection;
-    public static final Map<String, Connection> pool = new HashMap<>();
+    private static final Map<String, Connection> pool = new HashMap<>();
 
 
 
-    public static void getConnection(Connection connection) {
+
+    public static void add(Connection connection) {
         Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
-        pool.put(tab.getText() + Credentials.getName(), connection);
+        pool.put(tab.getId(), connection);
     }
 
 
     public static void switchConnection(Tab tab) {
         if (connection != null) {
-            String server = tab.getText();
+            String server = tab.getId();
             if (pool.containsKey(server)) {
                 connection = pool.get(server);
             }
@@ -34,7 +35,7 @@ public class ConnectionPool {
     public static void getInfo(Label name, Label host, Label user) {
             try {
                 DatabaseMetaData dbm = connection.getMetaData();
-                name.setText(dbm.getDatabaseProductName() + ":" + Credentials.getName());
+                name.setText(dbm.getDatabaseProductName() + ":" + Credentials.getServerName());
                 user.setText(dbm.getUserName());
                 host.setText(Credentials.getIp() + ":" + Credentials.getPort());
             } catch (SQLException e) {

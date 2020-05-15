@@ -2,19 +2,22 @@ package sir.server.connection;
 
 public class Credentials {
 
-    private static String name;
+    private static String serverName;
+    private static String database;
+    private static String driverType;
+    private static String sid;
     private static String ip;
     private static String port;
     private static String user;
     private static String pass;
 
 
-    public static String getName() {
-        return name;
+    public static String getServerName() {
+        return serverName;
     }
 
-    public static void setName(String name) {
-        Credentials.name = name;
+    public static void setServerName(String serverName) {
+        Credentials.serverName = serverName;
     }
 
     public static String getIp() {
@@ -49,5 +52,27 @@ public class Credentials {
         Credentials.pass = pass;
     }
 
+    public static String getDatabase() {
+        return database;
+    }
 
+    public static void setDatabase(String database) {
+        Credentials.database = database;
+    }
+
+    public static String getDriverType() {
+        return driverType;
+    }
+
+    public static void setDriverType(String driverType) {
+        Credentials.driverType = driverType;
+    }
+
+    public static String getSid() {
+        return sid;
+    }
+
+    public static void setSid(String sid) {
+        Credentials.sid = sid;
+    }
 }

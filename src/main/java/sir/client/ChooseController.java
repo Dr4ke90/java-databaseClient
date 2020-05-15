@@ -25,7 +25,13 @@ public class ChooseController {
         tab.setText("PostGreSQL/");
     }
 
-
+    public void setOracleConnection() throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/credentials.fxml"));
+        Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
+        tab.setContent(parent);
+        tab.setText("Oracle/");
+    }
 
 
 

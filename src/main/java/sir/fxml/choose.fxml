@@ -21,11 +21,14 @@
             </Label>
             <Button fx:id="mysql" alignment="CENTER" mnemonicParsing="false" onAction="#setMysqlConnection" prefWidth="200.0" text="MySql Server" />
             <Button fx:id="postgres" mnemonicParsing="false" onAction="#setPostGresConnection" prefWidth="200.0" text="PostGres Server" />
+            <Button mnemonicParsing="false" onAction="#setOracleConnection" prefWidth="200.0" text="Oracle Server" />
+            <Button mnemonicParsing="false" prefWidth="200.0" text="Microsoft Server" />
+            <Button mnemonicParsing="false" prefWidth="200.0" text="IBM Server" />
          </children></VBox>
-      <GridPane fx:id="gridPane" hgap="10.0" layoutX="17.0" layoutY="119.0" prefHeight="170.0" prefWidth="367.0" vgap="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+      <GridPane fx:id="gridPane" hgap="10.0" layoutX="17.0" layoutY="307.0" maxWidth="367.0" prefHeight="170.0" prefWidth="367.0" vgap="10.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

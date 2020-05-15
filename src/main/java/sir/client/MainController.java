@@ -6,10 +6,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import sir.server.connection.ActionsCollector;
 import sir.server.connection.ConnectionPool;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.util.Random;
 
 
 public class MainController {
@@ -35,15 +37,17 @@ public class MainController {
 
 
     public void createTab() throws Exception {
+        Random random = new Random();
+        int id = random.nextInt();
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/choose.fxml"));
         Tab tab = new Tab("New Connection");
         tab.setContent(parent);
+        tab.setId(String.valueOf(id));
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectLast();
         setOnTabCloseRequest(tab);
         setOnSelectionChanged(tab);
-
     }
 
 
@@ -73,7 +77,10 @@ public class MainController {
 
 
     public void setOnSelectionChanged(Tab tab) {
-        tab.setOnSelectionChanged(event -> ConnectionPool.switchConnection(tab));
+        tab.setOnSelectionChanged(event -> {
+            ConnectionPool.switchConnection(tab);
+            ActionsCollector.switchConnection(tab);
+        });
     }
 
 

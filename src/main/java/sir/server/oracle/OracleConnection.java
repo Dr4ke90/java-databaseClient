@@ -1,37 +1,45 @@
-package sir.server.mysql;
+package sir.server.oracle;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
-import sir.client.MainController;
-import sir.server.connection.*;
 import sir.client.CredentialsController;
+import sir.client.MainController;
+import sir.server.connection.ActionsCollector;
+import sir.server.connection.ConnectionPool;
+import sir.server.connection.Credentials;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
+public class OracleConnection {
 
-public class MySqlConnection {
+   public static ActionsCollector actionsCollector ;
 
-    private static ActionsCollector actionsCollector;
-
-    public MySqlConnection() {
+    public OracleConnection () {
         actionsCollector = new ActionsCollector();
     }
 
     public void connect(String name) {
-        final String url = "jdbc:mysql://" + Credentials.getIp() + ":" + Credentials.getPort() + "/";
+        String sid = Credentials.getSid();
+        String driverType = Credentials.getDriverType();
+        String ip = Credentials.getIp();
+        String port = Credentials.getPort();
+        final String url = "jdbc:oracle:" + driverType + ":@" + ip + ":" + port + ":" + sid;
         try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
             Connection connection = DriverManager.getConnection(url, Credentials.getUser(), Credentials.getPass());
             ConnectionPool.add(connection);
             ConnectionPool.connection = connection;
             actionsCollector.createCollector();
             if (connection != null) {
-                actionsCollector.add("Connection Succesfull");
+                actionsCollector.add("Connection succesfull");
                 setAppPage(name);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             CredentialsController.getError("Access Denied");
             System.out.println(e.getMessage());
         }
@@ -45,12 +53,12 @@ public class MySqlConnection {
             Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
             tab.setText(tab.getText() + name);
             tab.setContent(parent);
-        } catch (IOException e) {
+        }catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
 
 
-}
 
+}

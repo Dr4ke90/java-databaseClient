@@ -1,26 +1,29 @@
-package sir.server.mysql;
+package sir.server.oracle;
 
 import javafx.scene.control.*;
 import sir.client.MainController;
-import sir.server.connection.*;
+import sir.server.connection.ActionsCollector;
+import sir.server.connection.ConnectionPool;
+import sir.server.connection.Messages;
+import sir.server.connection.Result;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-public class MySqlQuerys {
+public class OracleQuerys {
 
     private static String query;
     private static Statement statement = null;
+    private final OracleConnection oracleConnection;
     private final ActionsCollector actionsCollector;
     private static Result result;
-    private static MetaData metaData;
 
 
-    public MySqlQuerys() {
+    public OracleQuerys() {
+        oracleConnection = new OracleConnection();
         actionsCollector = new ActionsCollector();
         result = new Result();
-        metaData = new MetaData();
         try {
             statement = ConnectionPool.connection.createStatement();
         } catch (SQLException e) {
@@ -75,7 +78,7 @@ public class MySqlQuerys {
             Result.resultSet = statement.executeQuery(query);
             clearTable(table, tableTitle);
             result.getTableResult(table, tableTitle);
-            actionsCollector.add("Select from " + metaData.getTableName());
+            actionsCollector.add("select");
         } catch (SQLException e) {
             actionsCollector.add(e.getMessage());
         }
@@ -93,7 +96,6 @@ public class MySqlQuerys {
             actionsCollector.add("Create " + query.substring(7));
         } else {
             showTables(list);
-            actionsCollector.add("Create " + query.substring(7,query.indexOf("(")));
         }
 
     }
@@ -103,8 +105,8 @@ public class MySqlQuerys {
         if (query.contains("table")) {
             try {
                 statement.executeUpdate(query);
-                actionsCollector.add("Alter table " + metaData.getTableName());
-                Result.resultSet = statement.executeQuery("select * from " + metaData.getTableName());
+                actionsCollector.add("Alter table " );
+                Result.resultSet = statement.executeQuery("select * from " );
                 result.getTableResult(table, tableTitle);
             } catch (SQLException e) {
                 actionsCollector.add(e.getMessage());
@@ -139,31 +141,26 @@ public class MySqlQuerys {
                     actionsCollector.add(e.getMessage());
                 }
             }
-            if (tableTitle.getText().equals(metaData.getTableName())) {
-                tableTitle.setText(metaData.getTableName());
-            }
         }
     }
 
     private void truncate(Label tableTitle, TableView<Map<Integer, String>> table) {
-        if (tableTitle.getText().equals(metaData.getTableName())) {
-            try {
-                statement.executeUpdate(query);
-                actionsCollector.add("Truncate " + query.substring(10));
-                Result.resultSet = statement.executeQuery("select * from " + metaData.getTableName());
-                result.getTableResult(table, tableTitle);
-            } catch (SQLException e) {
-                actionsCollector.add(e.getMessage());
-                actionsCollector.add("Truncate " + query.substring(10));
-            }
-        } else {
-            try {
-                statement.executeUpdate(query);
-            } catch (SQLException e) {
-                actionsCollector.add(e.getMessage());
-            }
+        try {
+            statement.executeUpdate(query);
+            actionsCollector.add("Truncate " + query.substring(10));
+            Result.resultSet = statement.executeQuery("select * from ");
+            result.getTableResult(table, tableTitle);
+        } catch (SQLException e) {
+            actionsCollector.add(e.getMessage());
+            actionsCollector.add("Truncate " + query.substring(10));
+        }
+        try {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            actionsCollector.add(e.getMessage());
         }
     }
+
 
     private void drop(Label listTitle, Label tableTitle, ListView<String> list, TableView<Map<Integer,
             String>> table, TableView<Messages> actions) {
@@ -201,14 +198,14 @@ public class MySqlQuerys {
                     statement.executeUpdate(query);
                     list.getItems().clear();
                     show(list, actions, listTitle);
-                    actionsCollector.add("Drop table " + metaData.getTableName());
+                    actionsCollector.add("Drop table " );
                 } catch (SQLException e) {
                     actionsCollector.add(e.getMessage());
                 }
             } else {
                 try {
                     statement.executeUpdate(query);
-                    actionsCollector.add("Drop table " + metaData.getTableName());
+                    actionsCollector.add("Drop table ");
                 } catch (SQLException e) {
                     actionsCollector.add(e.getMessage());
                 }
@@ -221,30 +218,27 @@ public class MySqlQuerys {
 
 
     private void update(Label tableTitle, TableView<Map<Integer, String>> tableView) {
-        if (tableTitle.getText().equals(metaData.getTableName())) {
             try {
                 statement.executeUpdate(query);
                 clearTable(tableView, tableTitle);
-                Result.resultSet = statement.executeQuery("select * from " + metaData.getTableName());
+                Result.resultSet = statement.executeQuery("select * from ");
                 result.getTableResult(tableView, tableTitle);
                 actionsCollector.add("Update executate");
             } catch (SQLException e) {
                 actionsCollector.add(e.getMessage());
             }
-        } else {
             try {
                 statement.executeUpdate(query);
                 actionsCollector.add("Update executate");
             } catch (SQLException e) {
                 actionsCollector.add(e.getMessage());
             }
-        }
     }
 
     public void show(ListView<String> list, TableView<Messages> actions, Label listTitle) {
         final String serverName = MainController.tabPane.getSelectionModel().getSelectedItem().getText().toLowerCase();
         assert false;
-        if (serverName.contains("mysql")) {
+        if (serverName.contains("oracle")) {
             if (query != null) {
                 if (query.contains("databases")) {
                     showDatabases(list, actions);
@@ -276,14 +270,18 @@ public class MySqlQuerys {
     }
 
 
-    private void showDatabases(ListView<String> list, TableView<Messages> actions) {
-        try {
-            list.getItems().clear();
-            Result.resultSet = statement.executeQuery("show databases");
-            result.getListResult(list);
-            actions.setItems(ActionsCollector.collector);
-        } catch (SQLException e) {
-            actionsCollector.add(e.getMessage());
+    public void showDatabases(ListView<String> list, TableView<Messages> actions) {
+        final String serverName = MainController.tabPane.getSelectionModel().getSelectedItem().getText().toLowerCase();
+        assert false;
+        if (serverName.contains("oracle")) {
+            try {
+                list.getItems().clear();
+                Result.resultSet = statement.executeQuery("SELECT username FROM dba_users");
+                result.getListResult(list);
+                actions.setItems(ActionsCollector.collector);
+            } catch (SQLException e) {
+                actionsCollector.add(e.getMessage());
+            }
         }
     }
 
