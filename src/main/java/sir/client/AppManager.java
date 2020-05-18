@@ -1,4 +1,5 @@
 package sir.client;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -9,11 +10,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import sir.server.connection.ConnectionPool;
+import sir.server.connection.ImageController;
 import sir.server.connection.Messages;
-import sir.server.mysql.MySqlQuerys;
-import sir.server.oracle.OracleQuerys;
-import sir.server.postgres.PostGresConnection;
-import sir.server.postgres.PostGresQuerys;
+import sir.server.connection.Querys;
+import sir.server.mysql.MySqlList;
+import sir.server.oracle.OracleList;
+import sir.server.postgres.PostGresList;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,9 +32,7 @@ public class AppManager {
     @FXML
     private Label dateLabel;
     @FXML
-    private ListView<String> list;
-    @FXML
-    private Label listTitle;
+    private TreeView<String> list;
     @FXML
     private TableView<Map<Integer, String>> table;
     @FXML
@@ -46,8 +47,18 @@ public class AppManager {
     private TabPane tabPane;
     @FXML
     private TableView<Messages> tableMessage;
-    private int tabIndex = 0;
+    @FXML
+    private Button send;
+    @FXML
+    private Button open;
+    @FXML
+    private Button save;
+    @FXML
+    private Button newTab;
 
+
+    private int tabIndex = 0;
+    private static TabPane mainTab;
 
 
     public void initialize() {
@@ -56,7 +67,9 @@ public class AppManager {
         setStage();
         setClock();
         createTab();
-        ConnectionPool.getInfo(name,host,user);
+        ConnectionPool.getInfo(name, host, user);
+        MainController.getTabPane(tabPane);
+        ImageController.addButtonsImage(send,open,save,newTab);
     }
 
     private void setStage() {
@@ -84,12 +97,18 @@ public class AppManager {
 
 
     public void setSchemas() {
-            MySqlQuerys mySqlQuerys = new MySqlQuerys();
-            mySqlQuerys.show(list, tableMessage, listTitle);
-            OracleQuerys oracle = new OracleQuerys();
-            oracle.showDatabases(list,tableMessage);
-            PostGresConnection.getDatabases(listTitle, list, tableMessage);
+        String server = mainTab.getSelectionModel().getSelectedItem().getText().toLowerCase();
+        if (server.contains("mysql")) {
+            MySqlList mySqlList = new MySqlList();
+            mySqlList.getList(list, tableMessage);
+        } else if (server.contains("oracle")) {
+            OracleList oracle = new OracleList();
+            oracle.getList(list,tableMessage);
+        } else if (server.contains("postgres")) {
+            PostGresList postGresList = new PostGresList();
+            postGresList.getList(list, tableMessage);
         }
+    }
 
     public void setTableActions() {
         TableColumn date = tableMessage.getColumns().get(0);
@@ -102,11 +121,12 @@ public class AppManager {
     public void createTab() {
         tabIndex++;
         Tab tab = new Tab("Query " + tabIndex);
+        tab.setGraphic(ImageController.addSqlIcon());
         TextArea textArea = new TextArea();
         textArea.setId("textArea");
         textArea.setStyle("-fx-text-fill:green;-fx-font-weight:bold");
         tab.setContent(textArea);
-        tab.setClosable(tabPane.getTabs().size() >= 1 );
+        tab.setClosable(tabPane.getTabs().size() >= 1);
         tab.setOnCloseRequest(event -> tabIndex--);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectLast();
@@ -115,47 +135,18 @@ public class AppManager {
 
 
     public void send() {
-        String server = MainController.tabPane.getSelectionModel().getSelectedItem().getText().toLowerCase();
-        if (server.contains("mysql")) {
-            MySqlQuerys querys = new MySqlQuerys();
-            querys.executeQuery(listTitle,tableTitle,list,table,tabPane,tableMessage);
-        } else if (server.contains("postgres")) {
-            PostGresQuerys pg = new PostGresQuerys();
-            pg.executeQuery(listTitle, tableTitle, list, table, tabPane,tableMessage);
-        } else if (server.contains("oracle")) {
-            OracleQuerys oracle = new OracleQuerys();
-            oracle.executeQuery(listTitle,tableTitle,list,table,tabPane,tableMessage);
-        }
-
+        Querys querys = new Querys();
+        querys.executeQuery(tableTitle,table,tabPane);
 
     }
 
-    public void copyText() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        TextArea textArea = (TextArea) tab.getContent().lookup("#textArea");
-        textArea.copy();
-    }
-
-
-    public void cutText() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        TextArea textArea = (TextArea) tab.getContent().lookup("#textArea");
-        textArea.cut();
-    }
-
-
-    public void pasteText() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        TextArea textArea = (TextArea) tab.getContent().lookup("#textArea");
-        textArea.paste();
-    }
 
     public void saveQuery() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         TextArea textArea = (TextArea) tab.getContent().lookup("#textArea");
         Stage stage = new Stage();
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TXT file", "*.sql"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("SQL file", "*.sql"));
         File file = fileChooser.showSaveDialog(stage);
         write(textArea.getText(), file);
     }
@@ -187,8 +178,9 @@ public class AppManager {
         }
     }
 
-
-
+    public static void getTabPane (TabPane tabPane) {
+        mainTab = tabPane;
+    }
 
 
 

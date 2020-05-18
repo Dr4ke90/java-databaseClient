@@ -6,12 +6,11 @@ import java.sql.SQLException;
 
 public class MetaData {
 
-    private static Connection connection;
+
     private static ActionsCollector actionsCollector;
 
 
    public MetaData () {
-        connection = ConnectionPool.connection;
         actionsCollector = new ActionsCollector();
     }
 

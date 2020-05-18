@@ -6,12 +6,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import sir.server.connection.ConnectionPool;
 import sir.server.connection.Credentials;
 import sir.server.mysql.MySqlConnection;
 import sir.server.oracle.OracleConnection;
 import sir.server.postgres.PostGresConnection;
-import sir.server.postgres.PostGresQuerys;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,37 +34,35 @@ public class CredentialsController {
     @FXML
     private TextField sid;
     private static Label error;
+    private static TabPane mainTab;
 
 
     public void initialize() {
-
         setLabel();
     }
 
 
-
-
     public void connect() {
         getCredentials();
-        String tabName = getTabName();
-        if (tabName.contains("mysql")){
+        String tabName = mainTab.getSelectionModel().getSelectedItem().getText().toLowerCase();
+        if (tabName.contains("mysql")) {
             MySqlConnection mysql = new MySqlConnection();
             mysql.connect(serverName.getText());
         } else if (tabName.contains("postgres")) {
             PostGresConnection postgres = new PostGresConnection();
+            postgres.getCredential(ip.getText(), port.getText(), user.getText(), pass.getText());
             postgres.connect(serverName.getText());
-            PostGresQuerys.crdMemory(user.getText(),pass.getText(),ip.getText(),port.getText());
         } else if (tabName.contains("oracle")) {
             OracleConnection oracle = new OracleConnection();
             oracle.connect(serverName.getText());
         }
     }
 
-    public void back () {
+    public void back() {
         FXMLLoader fxmlLoader = new FXMLLoader();
         try {
             Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/choose.fxml"));
-            Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
+            Tab tab = mainTab.getSelectionModel().getSelectedItem();
             tab.setContent(parent);
             tab.setText("New Connection");
         } catch (IOException ioException) {
@@ -75,10 +71,6 @@ public class CredentialsController {
 
 
     }
-
-
-
-
 
 
     private void getCredentials() {
@@ -92,10 +84,8 @@ public class CredentialsController {
     }
 
 
-
-    public String getTabName() {
-        Tab tab = MainController.tabPane.getSelectionModel().getSelectedItem();
-        return tab.getText().toLowerCase();
+    public static void getMainTab(TabPane tabPane) {
+        mainTab = tabPane;
     }
 
 

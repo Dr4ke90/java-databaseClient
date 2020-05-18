@@ -5,21 +5,22 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.MapValueFactory;
 
-import sir.client.MainController;
-import sir.server.mysql.MySqlConnection;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Result {
 
     public static ResultSet resultSet;
-    public static MetaData metaData = new MetaData();
-    public static Connection connection = ConnectionPool.connection;
+    public static MetaData metaData;
+    public static Connection connection;
+
+    public Result () {
+        metaData = new MetaData();
+        connection = ConnectionPool.connection;
+    }
 
 
     public void getTableResult(TableView<Map<Integer, String>> table, Label tableTitle) {
@@ -31,7 +32,7 @@ public class Result {
                 String name = resultSet.getMetaData().getColumnName(i);
                 tableColumn = new TableColumn<>(name);
                 tableColumn.setCellValueFactory(new MapValueFactory(i));
-                tableColumn.setPrefWidth(100);
+                tableColumn.setPrefWidth(150);
                 table.getColumns().addAll(tableColumn);
             }
             while (resultSet.next()) {
@@ -49,26 +50,4 @@ public class Result {
         }
     }
 
-    public void getListResult(ListView<String> listView) throws SQLException {
-        ObservableList<String> result = FXCollections.observableArrayList();
-        while (resultSet.next()) {
-            result.add(resultSet.getString(1));
-        }
-        listView.setItems(result);
-    }
-
-
-    public void getList(TreeView<String> list) {
-        Statement statement = null;
-        try {
-            connection.createStatement();
-            while (resultSet.next()) {
-                TreeItem<String> database = new TreeItem<>(resultSet.getString(1));
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
 }
