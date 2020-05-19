@@ -10,6 +10,7 @@ import sir.client.CredentialsController;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 
 public class MySqlConnection {
@@ -33,7 +34,7 @@ public class MySqlConnection {
                 setAppPage(name);
             }
         } catch (SQLException e) {
-            CredentialsController.getError("Access Denied");
+            System.out.println(e.getMessage());
         }
     }
 
@@ -50,10 +51,9 @@ public class MySqlConnection {
         }
     }
 
-    public static void getTabPane (TabPane tabPane) {
+    public static void getTabPane(TabPane tabPane) {
         mainTab = tabPane;
     }
-
 
 
 }
