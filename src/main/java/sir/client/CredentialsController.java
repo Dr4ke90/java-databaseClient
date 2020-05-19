@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import sir.server.connection.Credentials;
 import sir.server.mysql.MySqlConnection;
@@ -28,7 +29,7 @@ public class CredentialsController {
     @FXML
     private TextField serverName;
     @FXML
-    private AnchorPane anchor;
+    private TextField database;
     @FXML
     private TextField driver;
     @FXML
@@ -38,6 +39,7 @@ public class CredentialsController {
 
 
     public void initialize() {
+        activateField();
         setLabel();
     }
 
@@ -64,7 +66,9 @@ public class CredentialsController {
             Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/choose.fxml"));
             Tab tab = mainTab.getSelectionModel().getSelectedItem();
             tab.setContent(parent);
+            tab.setGraphic(new ImageView());
             tab.setText("New Connection");
+            desableField();
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
@@ -81,7 +85,24 @@ public class CredentialsController {
             Credentials.setServerName(serverName.getText());
             Credentials.setDriverType(driver.getText());
             Credentials.setSid(sid.getText());
+            Credentials.setDatabase(database.getText());
     }
+
+    public void activateField () {
+        String tabName = mainTab.getSelectionModel().getSelectedItem().getText().toLowerCase();
+        if (tabName.contains("mysql")) {
+            database.setDisable(false);
+        } else if (tabName.contains("oracle")) {
+            driver.setDisable(false);
+            sid.setDisable(false);
+        }
+    }
+
+    public void desableField () {
+            database.setDisable(true);
+            driver.setDisable(true);
+            sid.setDisable(true);
+        }
 
 
     public static void getMainTab(TabPane tabPane) {
@@ -93,7 +114,6 @@ public class CredentialsController {
         error = new Label();
         error.setStyle("-fx-text-fill:red");
         error.setAlignment(Pos.CENTER);
-        anchor.getChildren().add(error);
         AnchorPane.setRightAnchor(error, 20.0);
         AnchorPane.setLeftAnchor(error, 20.0);
         AnchorPane.setBottomAnchor(error, 20.0);

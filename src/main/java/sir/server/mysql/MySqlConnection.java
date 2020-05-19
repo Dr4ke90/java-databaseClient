@@ -22,7 +22,7 @@ public class MySqlConnection {
     }
 
     public void connect(String name) {
-        final String url = "jdbc:mysql://" + Credentials.getIp() + ":" + Credentials.getPort() + "/";
+        final String url = "jdbc:mysql://" + Credentials.getIp() + ":" + Credentials.getPort() + "/" + Credentials.getDatabase();
         try {
             Connection connection = DriverManager.getConnection(url, Credentials.getUser(), Credentials.getPass());
             ConnectionPool.add(connection);
