@@ -1,8 +1,8 @@
 package sir.server.connection;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import sir.client.MainController;
+import sir.client.Credentials;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -13,14 +13,13 @@ public class ConnectionPool {
 
     public static Connection connection;
     private static final Map<String, Connection> pool = new HashMap<>();
-    private static TabPane mainTab;
 
 
 
 
-    public static void add(Connection connection) {
-        Tab tab = mainTab.getSelectionModel().getSelectedItem();
-        pool.put(tab.getId(), connection);
+    public static void add(Connection conn, Tab tab) {
+        pool.put(tab.getId(), conn);
+        connection = conn;
     }
 
 
@@ -31,6 +30,10 @@ public class ConnectionPool {
                 connection = pool.get(server);
             }
         }
+    }
+
+    public static void removeFromPool (Tab tab) {
+        pool.remove(tab.getId());
     }
 
 
@@ -45,10 +48,6 @@ public class ConnectionPool {
             }
         }
 
-
-    public static void getTabPane (TabPane tabPane) {
-        mainTab = tabPane;
-    }
 
 
 

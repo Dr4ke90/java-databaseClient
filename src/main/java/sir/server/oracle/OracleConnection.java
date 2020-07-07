@@ -1,70 +1,61 @@
 package sir.server.oracle;
 
-import com.sun.org.apache.bcel.internal.generic.TABLESWITCH;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import sir.client.CredentialsController;
-import sir.client.MainController;
+import sir.client.HomeController;
+import sir.client.ImageController;
 import sir.server.connection.ActionsCollector;
+import sir.client.Credentials;
 import sir.server.connection.ConnectionPool;
-import sir.server.connection.Credentials;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Random;
 
 public class OracleConnection {
 
-   private static ActionsCollector actionsCollector ;
-   private static TabPane mainTab;
+    private static ActionsCollector actionsCollector;
 
-    public OracleConnection () {
+    private static Label error;
+
+    public OracleConnection() {
         actionsCollector = new ActionsCollector();
     }
 
-    public void connect(String name) {
-        String sid = Credentials.getSid();
-        String driverType = Credentials.getDriverType();
-        String ip = Credentials.getIp();
-        String port = Credentials.getPort();
-        final String url = "jdbc:oracle:" + driverType + ":@" + ip + ":" + port + ":" + sid;
+
+    public void connect(String serverName) {
+        final String sid = Credentials.getSid();
+        final String driverType = Credentials.getDriverType();
+        final String ip = Credentials.getIp();
+        final String port = Credentials.getPort();
+        final String jdbc = Credentials.getJdbc();
+        final String url = jdbc + driverType + ":@" + ip + ":" + port + ":" + sid;
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             Connection connection = DriverManager.getConnection(url, Credentials.getUser(), Credentials.getPass());
-            ConnectionPool.add(connection);
-            ConnectionPool.connection = connection;
-            actionsCollector.createCollector();
             if (connection != null) {
+                Random random = new Random();
+                int tabId = random.nextInt();
+                Tab tab = new Tab("Oracle/" + serverName);
+                tab.setId(String.valueOf(tabId));
+                tab.setGraphic(ImageController.loadOracleImage());
+                ActionsCollector.createCollector(tab);
+                ConnectionPool.add(connection, tab);
                 actionsCollector.add("Connection succesfull");
-                setAppPage(name);
+                HomeController homeController = new HomeController();
+                homeController.addTabContent(tab);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            CredentialsController.getError("Access Denied");
-            System.out.println(e.getMessage());
+            error.setText("Access denied");
         }
     }
 
 
-    private void setAppPage(String name) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/aplication.fxml"));
-            Tab tab = mainTab.getSelectionModel().getSelectedItem();
-            tab.setText(tab.getText() + name);
-            tab.setContent(parent);
-        }catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+    public static void getLabel(Label label) {
+        error = label;
     }
-
-    public static void getTabPane (TabPane tabPane) {
-        mainTab = tabPane;
-    }
-
-
 
 }
+
+

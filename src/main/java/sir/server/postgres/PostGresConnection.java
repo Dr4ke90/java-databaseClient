@@ -1,23 +1,20 @@
 package sir.server.postgres;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
+import sir.client.HomeController;
+import sir.client.ImageController;
 import sir.server.connection.ActionsCollector;
+import sir.client.Credentials;
 import sir.server.connection.ConnectionPool;
-import sir.client.CredentialsController;
-import sir.client.MainController;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.*;
+import java.util.Random;
 
 
 public class PostGresConnection {
 
-
+    private static Label error;
     private static ActionsCollector actionsCollector;
-    private static TabPane mainTab;
     public static String ip;
     public static String port;
     public static String user;
@@ -36,40 +33,31 @@ public class PostGresConnection {
     }
 
 
-    public void connect(String name) {
-        final String url = "jdbc:postgresql://" + ip + ":" + port + "/";
+    public void connect(String serverName) {
+        final String url = Credentials.getJdbc() + ip + ":" + port + "/";
         try {
             Connection connection = DriverManager.getConnection(url, user, pass);
-            ConnectionPool.add(connection);
-            ConnectionPool.connection = connection;
-            actionsCollector.createCollector();
             if (connection != null) {
-                actionsCollector.add("Connection Succesfull");
-                setAppPage(name);
+                Tab tab = new Tab("PostGreSQL/" + serverName);
+                tab.setGraphic(ImageController.loadPostgresImage());
+                Random random = new Random();
+                int tabId = random.nextInt();
+                tab.setId(String.valueOf(tabId));
+                tab.setGraphic(ImageController.loadPostgresImage());
+                ActionsCollector.createCollector(tab);
+                ConnectionPool.add(connection, tab);
+                actionsCollector.add("Connection succesfull");
+                HomeController homeController = new HomeController();
+                homeController.addTabContent(tab);
             }
         } catch (SQLException e) {
-            CredentialsController.getError("Access Denied");
-            System.out.println(e.getMessage());
+            error.setText("Access denied");
         }
     }
 
 
-
-    private void setAppPage(String name) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/aplication.fxml"));
-            Tab tab = mainTab.getSelectionModel().getSelectedItem();
-            tab.setText(tab.getText() + name);
-            tab.setContent(parent);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+    public static void getLabel(Label label) {
+        error = label;
     }
-
-    public static void getTabPane (TabPane tabPane) {
-        mainTab = tabPane;
-    }
-
 
 }

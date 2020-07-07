@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sir.client.AppManager">
+<AnchorPane prefHeight="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sir.client.AplicationController">
    <children>
       <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -27,11 +27,6 @@
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
                               <TextField minHeight="30.0" promptText="Search" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0" />
-                              <Label fx:id="listTitle" alignment="CENTER" minHeight="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-                                 <font>
-                                    <Font name="Arial Bold" size="14.0" />
-                                 </font>
-                              </Label>
                               <TreeView fx:id="list" layoutX="24.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
                               <Label layoutX="34.0" layoutY="6.0" minHeight="30.0" minWidth="30.0" text="Navigator" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
@@ -89,7 +84,7 @@
                <items>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TabPane minWidth="130.0" prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TabPane fx:id="queryTabPane" minWidth="130.0" prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <tabs>
                             <Tab closable="false" text="Query">
                                  <content>
@@ -143,7 +138,7 @@
                   </AnchorPane>
                   <AnchorPane minHeight="60.0">
                      <children>
-                        <TableView id="table" fx:id="table" minHeight="350.0" onKeyPressed="#setSearch" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+                        <TableView id="table" fx:id="table" minHeight="350.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                            <cursor>
                               <Cursor fx:constant="TEXT" />
                            </cursor>

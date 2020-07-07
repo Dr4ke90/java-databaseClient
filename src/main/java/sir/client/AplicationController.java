@@ -10,13 +10,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import sir.server.connection.ConnectionPool;
-import sir.server.connection.ImageController;
 import sir.server.connection.Messages;
 import sir.server.connection.Querys;
 import sir.server.mysql.MySqlList;
 import sir.server.oracle.OracleList;
 import sir.server.postgres.PostGresList;
-
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,10 +22,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 
 
-public class AppManager {
+public class AplicationController {
 
     @FXML
     private Label dateLabel;
@@ -56,67 +53,28 @@ public class AppManager {
     @FXML
     private Button newTab;
 
-
-    private int tabIndex = 0;
-    private static TabPane mainTab;
+    private int tabIndex;
+    private static MenuBar menuBar;
 
 
     public void initialize() {
-        setTableActions();
         setSchemas();
-        setStage();
         setClock();
+        setTableActions();
         createTab();
+        activateMenu();
         ConnectionPool.getInfo(name, host, user);
-        MainController.getTabPane(tabPane);
-        ImageController.addButtonsImage(send,open,save,newTab);
-    }
-
-    private void setStage() {
-        Main.stage.setMinWidth(800);
-        Main.stage.setMinHeight(500);
-        Main.stage.setResizable(true);
-        MenuBar menuBar = (MenuBar) Main.stage.getScene().lookup("#menuBar");
-        menuBar.getMenus().get(1).setDisable(false);
-        menuBar.getMenus().get(0).getItems().get(4).setDisable(false);
-
-    }
-
-
-    private void setClock() {
-        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
-            Date currentTime = new Date();
-            SimpleDateFormat formater = new SimpleDateFormat("HH:mm:ss       MMMM dd yyyy");
-            dateLabel.setText(formater.format(currentTime));
-        }),
-                new KeyFrame(Duration.seconds(1))
-        );
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
+        ImageController.addButtonsImage(send, open, save, newTab);
+        list.setContextMenu(RightClickMenu.handleDatabaseMenu());
     }
 
 
     public void setSchemas() {
-        String server = mainTab.getSelectionModel().getSelectedItem().getText().toLowerCase();
-        if (server.contains("mysql")) {
-            MySqlList mySqlList = new MySqlList();
-            mySqlList.getList(list, tableMessage);
-        } else if (server.contains("oracle")) {
-            OracleList oracle = new OracleList();
-            oracle.getList(list,tableMessage);
-        } else if (server.contains("postgres")) {
-            PostGresList postGresList = new PostGresList();
-            postGresList.getList(list, tableMessage);
-        }
+      AplicationService aplicationService = new AplicationService();
+      aplicationService.setSchemas(list,tableMessage);
+      RightClickMenu rightClickMenu = new RightClickMenu();
+      rightClickMenu.getList(list,tableMessage);
     }
-
-    public void setTableActions() {
-        TableColumn date = tableMessage.getColumns().get(0);
-        date.setCellValueFactory(new PropertyValueFactory<>("time"));
-        TableColumn message = tableMessage.getColumns().get(1);
-        message.setCellValueFactory(new PropertyValueFactory<>("mess"));
-    }
-
 
     public void createTab() {
         tabIndex++;
@@ -130,14 +88,18 @@ public class AppManager {
         tab.setOnCloseRequest(event -> tabIndex--);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectLast();
-
     }
 
+    private void setTableActions() {
+        TableColumn date = tableMessage.getColumns().get(0);
+        date.setCellValueFactory(new PropertyValueFactory<>("time"));
+        TableColumn message = tableMessage.getColumns().get(1);
+        message.setCellValueFactory(new PropertyValueFactory<>("mess"));
+    }
 
     public void send() {
         Querys querys = new Querys();
-        querys.executeQuery(tableTitle,table,tabPane);
-
+        querys.executeQuery(tableTitle, table, tabPane, HomeController.getTabPane());
     }
 
 
@@ -178,14 +140,33 @@ public class AppManager {
         }
     }
 
-    public static void getTabPane (TabPane tabPane) {
-        mainTab = tabPane;
+
+    private void setClock() {
+        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+            Date currentTime = new Date();
+            SimpleDateFormat formater = new SimpleDateFormat("HH:mm:ss       MMMM dd yyyy");
+            dateLabel.setText(formater.format(currentTime));
+        }),
+                new KeyFrame(Duration.seconds(1))
+        );
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
     }
 
+    private void activateMenu() {
+        if (ConnectionPool.connection != null) {
+            Menu file = menuBar.getMenus().get(0);
+            MenuItem close = file.getItems().get(1);
+            MenuItem save = file.getItems().get(2);
+            close.setDisable(false);
+            save.setDisable(false);
+            Menu edit = menuBar.getMenus().get(1);
+            edit.setDisable(false);
+        }
+    }
 
-
-    public void setSearch() {
-
+    public static void getMenuBar(MenuBar menuBarr) {
+        menuBar = menuBarr;
     }
 
 

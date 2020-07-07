@@ -1,6 +1,5 @@
 package sir.server.connection;
 
-import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 

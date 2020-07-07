@@ -1,7 +1,6 @@
 package sir.server.connection;
 
 import javafx.scene.control.*;
-import sir.client.MainController;
 import sir.server.postgres.PostGresList;
 
 import java.sql.SQLException;
@@ -16,7 +15,6 @@ public class Querys {
     public static Result result;
     private static MetaData metaData;
     private static PostGresList postGresList;
-    private static TabPane mainTab;
 
 
     public Querys() {
@@ -29,19 +27,22 @@ public class Querys {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void getQuery(TabPane tabPane) {
+    public static String getQuery() {
+        return query;
+    }
+
+    private void getQueryFromSelectetTab(TabPane tabPane){
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         TextArea textArea = (TextArea) tab.getContent().lookup("#textArea");
         query = textArea.getText().toLowerCase();
     }
 
-    public void executeQuery(Label tableTitle, TableView<Map<Integer, String>> table, TabPane tabPane) {
-        getQuery(tabPane);
+    public void executeQuery(Label tableTitle, TableView<Map<Integer, String>> table, TabPane tabPane, TabPane mainTabPane) {
+        getQueryFromSelectetTab(tabPane);
         if (query.startsWith("use")) {
-            use();
+            use(mainTabPane);
         } else if (query.startsWith("select")) {
             select(tableTitle, table);
         } else if (query.startsWith("create")) {
@@ -61,18 +62,18 @@ public class Querys {
         } else if (query.startsWith("set")) {
             set();
         } else if (query.startsWith("clear")) {
-            clearTable(table,tableTitle);
+            clearTable(table, tableTitle);
         }
     }
 
 
-    public void use() {
-        String tab = mainTab.getSelectionModel().getSelectedItem().getText().toLowerCase();
-        if (tab.contains("postgres")) {
+    public void use(TabPane tabPane) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab.getText().toLowerCase().contains("postgres")) {
             String dbName = query.substring(4);
             postGresList.dbConnect(dbName);
             actionsCollector.add("Connected to " + dbName);
-        }else if (tab.contains("mysql")){
+        } else if (tab.getText().toLowerCase().contains("mysql")) {
             try {
                 statement.executeUpdate(query);
                 actionsCollector.add("Use " + query.substring(4));
@@ -80,16 +81,18 @@ public class Querys {
                 actionsCollector.add(e.getMessage());
             }
         }
+        String tabText = tab.getText().substring(0, tab.getText().indexOf("/") + 1);
+        tab.setText(tabText + query.substring(4));
     }
 
 
     private void set() {
-            String schemaName = query.substring(11);
-            try {
-                statement.executeUpdate("set search_path to " + schemaName);
-                actionsCollector.add("Set schema to " + schemaName);
-            } catch (SQLException e) {
-                actionsCollector.add(e.getMessage());
+        String schemaName = query.substring(11);
+        try {
+            statement.executeUpdate("set search_path to " + schemaName);
+            actionsCollector.add("Set schema to " + schemaName);
+        } catch (SQLException e) {
+            actionsCollector.add(e.getMessage());
         }
     }
 
@@ -107,9 +110,9 @@ public class Querys {
     public void create() {
         try {
             statement.executeUpdate(query);
-            if (query.startsWith("database")) {
+            if (query.contains("database")) {
                 actionsCollector.add("Create database " + query.substring(16));
-            } else if (query.startsWith("table")) {
+            } else if (query.contains("table")) {
                 actionsCollector.add("Create " + query.substring(7, query.indexOf("(")));
             }
 
@@ -122,7 +125,7 @@ public class Querys {
     public void drop() {
         try {
             statement.executeUpdate(query);
-            actionsCollector.add("Drop " + query.substring(5));
+                actionsCollector.add("Drop " + query.substring(5));
         } catch (SQLException e) {
             actionsCollector.add(e.getMessage());
         }
@@ -185,9 +188,5 @@ public class Querys {
         table.getColumns().clear();
         table.getItems().clear();
         tableTitle.setText("");
-    }
-
-    public static void getTabPane (TabPane tabPane) {
-        mainTab = tabPane;
     }
 }

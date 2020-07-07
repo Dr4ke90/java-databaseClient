@@ -1,4 +1,4 @@
-package sir.server.connection;
+package sir.client;
 
 public class Credentials {
 
@@ -10,6 +10,7 @@ public class Credentials {
     private static String port;
     private static String user;
     private static String pass;
+    private static String jdbc;
 
 
     public static String getServerName() {
@@ -74,5 +75,13 @@ public class Credentials {
 
     public static void setSid(String sid) {
         Credentials.sid = sid;
+    }
+
+    public static String getJdbc() {
+        return jdbc;
+    }
+
+    public static void setJdbc(String jdbc) {
+        Credentials.jdbc = jdbc;
     }
 }

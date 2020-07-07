@@ -18,7 +18,7 @@
             </Label>
             <Button fx:id="mysql" alignment="CENTER" mnemonicParsing="false" onAction="#setMysqlConnection" prefWidth="200.0" text="MySql " />
             <Button fx:id="postgres" mnemonicParsing="false" onAction="#setPostGresConnection" prefWidth="200.0" text="PostGreSQL" />
-            <Button mnemonicParsing="false" onAction="#setOracleConnection" prefWidth="200.0" text="Oracle Server" />
+            <Button fx:id="oracle" mnemonicParsing="false" onAction="#setOracleConnection" prefWidth="200.0" text="Oracle Server" />
             <Button mnemonicParsing="false" prefWidth="200.0" text="Microsoft SQL" />
             <Button mnemonicParsing="false" prefWidth="200.0" text="IBM DB2 Server" />
          </children></VBox>

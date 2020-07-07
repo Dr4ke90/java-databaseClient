@@ -1,4 +1,4 @@
-package sir.server.connection;
+package sir.client;
 
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -133,6 +133,20 @@ public class ImageController {
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(30);
             imageView.setFitHeight(30);
+            return imageView;
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static ImageView loadHomeImage() {
+        try {
+            Image image = new Image(new FileInputStream("src/main/java/sir/icons/home.png"));
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(25);
+            imageView.setFitHeight(25);
             return imageView;
         } catch (FileNotFoundException fileNotFoundException) {
             fileNotFoundException.printStackTrace();

@@ -5,8 +5,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import sir.server.connection.ActionsCollector;
 import sir.server.connection.ConnectionPool;
-import sir.server.connection.ImageController;
+import sir.client.ImageController;
 import sir.server.connection.Messages;
+
 import java.sql.*;
 
 public class PostGresList {

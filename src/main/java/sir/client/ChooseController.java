@@ -1,56 +1,44 @@
 package sir.client;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+
 import javafx.scene.control.TextField;
-import sir.server.connection.ImageController;
-import java.io.FileInputStream;
 
 public class ChooseController {
 
-    private static TabPane mainTab;
+    private static TextField database;
+    private static TextField driverType;
+    private static TextField sid;
 
 
     public void setMysqlConnection() throws Exception {
-        Tab tab = mainTab.getSelectionModel().getSelectedItem();
-        tab.setGraphic(ImageController.loadMysqlImage());
-        tab.setText("MySQL/");
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/credential.fxml"));
-        tab.setContent(parent);
-
+        ConnectionSetup connectionSetup = new ConnectionSetup();
+        connectionSetup.loadCredentialsScene();
+        Credentials.setJdbc("jdbc:mysql://");
+        database.setDisable(false);
     }
 
 
     public void setPostGresConnection() throws Exception {
-        Tab tab = mainTab.getSelectionModel().getSelectedItem();
-        tab.setGraphic(ImageController.loadPostgresImage());
-        tab.setText("PostGreSQL/");
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/credential.fxml"));
-        tab.setContent(parent);
-
+        ConnectionSetup connectionSetup = new ConnectionSetup();
+        connectionSetup.loadCredentialsScene();
+        Credentials.setJdbc("jdbc:postgresql://");
+        database.setDisable(false);
     }
 
 
     public void setOracleConnection() throws Exception {
-        Tab tab = mainTab.getSelectionModel().getSelectedItem();
-        tab.setGraphic(ImageController.loadOracleImage());
-        tab.setText("Oracle/");
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/credential.fxml"));
-        tab.setContent(parent);
-
+        ConnectionSetup connectionSetup = new ConnectionSetup();
+        connectionSetup.loadCredentialsScene();
+        Credentials.setJdbc("jdbc:oracle:");
+        driverType.setDisable(false);
+        sid.setDisable(false);
     }
 
+    public static void set(TextField database, TextField driverType, TextField sid) {
+        ChooseController.database = database;
+        ChooseController.driverType = driverType;
+        ChooseController.sid = sid;
 
-    public static void getTabPane(TabPane tabPane) {
-       mainTab = tabPane;
     }
-
-
-
 
 }

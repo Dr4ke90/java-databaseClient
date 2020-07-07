@@ -3,45 +3,41 @@ package sir.server.connection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import sir.client.MainController;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PrimitiveIterator;
 
 public class ActionsCollector {
 
     private static final Map<String, ObservableList<Messages>> collectorPool = new HashMap<>();
     public static ObservableList<Messages> collector;
-    private static TabPane mainTab;
 
 
-
-    public void createCollector() {
-        Tab tab = mainTab.getSelectionModel().getSelectedItem();
+    public static void createCollector(Tab tab) {
         ObservableList<Messages> collector = FXCollections.observableArrayList();
-        collectorPool.put(tab.getId(), collector);
         ActionsCollector.collector = collector;
+        collectorPool.put(tab.getId(), collector);
+
     }
 
 
-
-    public static void switchConnection(Tab tab) {
+    public static void switchCollector(Tab tab) {
         String tabId = tab.getId();
         if (collectorPool.containsKey(tabId)) {
             collector = collectorPool.get(tabId);
         }
     }
 
-    public void add(String text) {
-        Messages mess = new Messages(text);
-        collector.add(mess);
+    public static void removeCollector(Tab tab) {
+        String tabId = tab.getId();
+        if (collectorPool.containsKey(tabId)) ;
+        collectorPool.remove(tabId);
     }
 
 
-    public static void getTabPane (TabPane tabPane) {
-        mainTab = tabPane;
+    public void add(String text) {
+        Messages mess = new Messages(text);
+        collector.add(mess);
     }
 
 
