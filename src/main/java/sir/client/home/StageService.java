@@ -1,6 +1,5 @@
-package sir.client;
+package sir.client.home;
 
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,24 +7,18 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
-import sir.server.connection.ConnectionPool;
+import sir.server.connection.ConnectionPoolManager;
 
 import java.io.FileInputStream;
 import java.sql.SQLException;
 
-public class HomePage extends Application {
+public class StageService {
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
+    public void setScene (Stage primaryStage) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/home.fxml"));
-
         Scene scene = new Scene(parent);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(1000);
@@ -33,12 +26,15 @@ public class HomePage extends Application {
         primaryStage.setResizable(true);
         primaryStage.setTitle("SIR Universal Workbench");
         primaryStage.show();
+    }
 
-        TabPane tabPane = (TabPane) primaryStage.getScene().lookup("#tabPane");
 
+
+    public void close (Stage primaryStage) {
+        TabPane tabPane = HomeObjects.getTabPane();
         primaryStage.setOnCloseRequest(event -> {
             try {
-                if (ConnectionPool.connection != null) {
+                if (ConnectionPoolManager.getConnectionFromPool() != null) {
                     if (tabPane.getTabs().size() > 2) {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setHeaderText("Close all connection?");
@@ -49,7 +45,7 @@ public class HomePage extends Application {
                         } else if (buttonType == ButtonType.CANCEL) {
                             event.consume();
                         }
-                    } else if (ConnectionPool.connection.isClosed()) {
+                    } else if (ConnectionPoolManager.getConnectionFromPool().isClosed()) {
                         primaryStage.close();
                     }else {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -67,6 +63,6 @@ public class HomePage extends Application {
                 e.printStackTrace();
             }
         });
-    }
 
+    }
 }

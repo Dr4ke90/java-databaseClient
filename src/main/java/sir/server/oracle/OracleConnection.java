@@ -1,30 +1,19 @@
 package sir.server.oracle;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import sir.client.HomeController;
-import sir.client.ImageController;
-import sir.server.connection.ActionsCollector;
-import sir.client.Credentials;
-import sir.server.connection.ConnectionPool;
+import sir.client.connSetup.CredentialsObjects;
+import sir.client.home.TabPaneService;
+import sir.client.connSetup.Credentials;
+import sir.server.connection.CollectorPoolManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Random;
 
 public class OracleConnection {
 
-    private static ActionsCollector actionsCollector;
-
-    private static Label error;
-
-    public OracleConnection() {
-        actionsCollector = new ActionsCollector();
-    }
 
 
-    public void connect(String serverName) {
+    public void connect() {
         final String sid = Credentials.getSid();
         final String driverType = Credentials.getDriverType();
         final String ip = Credentials.getIp();
@@ -35,26 +24,19 @@ public class OracleConnection {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             Connection connection = DriverManager.getConnection(url, Credentials.getUser(), Credentials.getPass());
             if (connection != null) {
-                Random random = new Random();
-                int tabId = random.nextInt();
-                Tab tab = new Tab("Oracle/" + serverName);
-                tab.setId(String.valueOf(tabId));
-                tab.setGraphic(ImageController.loadOracleImage());
-                ActionsCollector.createCollector(tab);
-                ConnectionPool.add(connection, tab);
-                actionsCollector.add("Connection succesfull");
-                HomeController homeController = new HomeController();
-                homeController.addTabContent(tab);
+                TabPaneService tabPaneService = new TabPaneService();
+                tabPaneService.createNewTab(connection);
+                CollectorPoolManager collectorPool = new CollectorPoolManager();
+                collectorPool.addAction("Connection succesfull");
             }
         } catch (SQLException | ClassNotFoundException e) {
-            error.setText("Access denied");
+          CredentialsObjects.getErrorMessage().setText("Access denied");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
 
-    public static void getLabel(Label label) {
-        error = label;
-    }
 
 }
 

@@ -1,20 +1,13 @@
-package sir.client;
+package sir.client.connSetup;
 
-
-import javafx.scene.control.TextField;
-
-public class ChooseController {
-
-    private static TextField database;
-    private static TextField driverType;
-    private static TextField sid;
+public class ChoosePageService {
 
 
     public void setMysqlConnection() throws Exception {
         ConnectionSetup connectionSetup = new ConnectionSetup();
         connectionSetup.loadCredentialsScene();
         Credentials.setJdbc("jdbc:mysql://");
-        database.setDisable(false);
+        CredentialsObjects.getDatabase().setDisable(false);
     }
 
 
@@ -22,7 +15,7 @@ public class ChooseController {
         ConnectionSetup connectionSetup = new ConnectionSetup();
         connectionSetup.loadCredentialsScene();
         Credentials.setJdbc("jdbc:postgresql://");
-        database.setDisable(false);
+      CredentialsObjects.getDatabase().setDisable(false);
     }
 
 
@@ -30,15 +23,7 @@ public class ChooseController {
         ConnectionSetup connectionSetup = new ConnectionSetup();
         connectionSetup.loadCredentialsScene();
         Credentials.setJdbc("jdbc:oracle:");
-        driverType.setDisable(false);
-        sid.setDisable(false);
+        CredentialsObjects.getDriver().setDisable(false);
+        CredentialsObjects.getSid().setDisable(false);
     }
-
-    public static void set(TextField database, TextField driverType, TextField sid) {
-        ChooseController.database = database;
-        ChooseController.driverType = driverType;
-        ChooseController.sid = sid;
-
-    }
-
 }

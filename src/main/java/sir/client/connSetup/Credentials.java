@@ -1,4 +1,5 @@
-package sir.client;
+package sir.client.connSetup;
+
 
 public class Credentials {
 
@@ -19,6 +20,30 @@ public class Credentials {
 
     public static void setServerName(String serverName) {
         Credentials.serverName = serverName;
+    }
+
+    public static String getDatabase() {
+        return database;
+    }
+
+    public static void setDatabase(String database) {
+        Credentials.database = database;
+    }
+
+    public static String getDriverType() {
+        return driverType;
+    }
+
+    public static void setDriverType(String driverType) {
+        Credentials.driverType = driverType;
+    }
+
+    public static String getSid() {
+        return sid;
+    }
+
+    public static void setSid(String sid) {
+        Credentials.sid = sid;
     }
 
     public static String getIp() {
@@ -51,30 +76,6 @@ public class Credentials {
 
     public static void setPass(String pass) {
         Credentials.pass = pass;
-    }
-
-    public static String getDatabase() {
-        return database;
-    }
-
-    public static void setDatabase(String database) {
-        Credentials.database = database;
-    }
-
-    public static String getDriverType() {
-        return driverType;
-    }
-
-    public static void setDriverType(String driverType) {
-        Credentials.driverType = driverType;
-    }
-
-    public static String getSid() {
-        return sid;
-    }
-
-    public static void setSid(String sid) {
-        Credentials.sid = sid;
     }
 
     public static String getJdbc() {

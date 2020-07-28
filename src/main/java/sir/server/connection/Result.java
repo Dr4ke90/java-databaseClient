@@ -4,8 +4,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.MapValueFactory;
+import sir.client.newtabs.NewTabObjects;
+import sir.client.newtabs.SelectedTab;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -14,16 +15,14 @@ import java.util.Map;
 public class Result {
 
     public static ResultSet resultSet;
-    public static MetaData metaData;
-    public static Connection connection;
+    private static MetaData metaData;
 
-    public Result () {
+    public Result() {
         metaData = new MetaData();
-        connection = ConnectionPool.connection;
     }
 
 
-    public void getTableResult(TableView<Map<Integer, String>> table, Label tableTitle) {
+    public void setResultOnTable() {
         try {
             TableColumn<Map<Integer, String>, String> tableColumn;
             ObservableList<Map<Integer, String>> alldata = FXCollections.observableArrayList();
@@ -33,7 +32,7 @@ public class Result {
                 tableColumn = new TableColumn<>(name);
                 tableColumn.setCellValueFactory(new MapValueFactory(i));
                 tableColumn.setPrefWidth(150);
-                table.getColumns().addAll(tableColumn);
+                SelectedTab.getTable().getColumns().addAll(tableColumn);
             }
             while (resultSet.next()) {
                 Map<Integer, String> dataRow = new HashMap<>();
@@ -43,8 +42,8 @@ public class Result {
                 }
                 alldata.add(dataRow);
             }
-            table.setItems(alldata);
-            tableTitle.setText(metaData.getTableName());
+            SelectedTab.getTable().setItems(alldata);
+            SelectedTab.getTableTitle().setText(metaData.getTableName());
         } catch (SQLException e) {
             e.getMessage();
         }

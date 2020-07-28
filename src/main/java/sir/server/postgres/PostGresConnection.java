@@ -1,29 +1,21 @@
 package sir.server.postgres;
 
-import javafx.scene.control.*;
-import sir.client.HomeController;
-import sir.client.ImageController;
-import sir.server.connection.ActionsCollector;
-import sir.client.Credentials;
-import sir.server.connection.ConnectionPool;
+import sir.client.connSetup.CredentialsObjects;
+import sir.client.home.TabPaneService;
+import sir.client.connSetup.Credentials;
+import sir.server.connection.CollectorPoolManager;
 
 import java.sql.*;
-import java.util.Random;
 
 
 public class PostGresConnection {
 
-    private static Label error;
-    private static ActionsCollector actionsCollector;
     public static String ip;
     public static String port;
     public static String user;
     public static String pass;
 
 
-    public PostGresConnection() {
-        actionsCollector = new ActionsCollector();
-    }
 
     public void getCredential(String unIp, String unPort, String unUser, String passs) {
         user = unUser;
@@ -33,31 +25,22 @@ public class PostGresConnection {
     }
 
 
-    public void connect(String serverName) {
-        final String url = Credentials.getJdbc() + ip + ":" + port + "/";
+    public void connect() {
+        String url = Credentials.getJdbc() + ip + ":" + port + "/";
         try {
             Connection connection = DriverManager.getConnection(url, user, pass);
             if (connection != null) {
-                Tab tab = new Tab("PostGreSQL/" + serverName);
-                tab.setGraphic(ImageController.loadPostgresImage());
-                Random random = new Random();
-                int tabId = random.nextInt();
-                tab.setId(String.valueOf(tabId));
-                tab.setGraphic(ImageController.loadPostgresImage());
-                ActionsCollector.createCollector(tab);
-                ConnectionPool.add(connection, tab);
-                actionsCollector.add("Connection succesfull");
-                HomeController homeController = new HomeController();
-                homeController.addTabContent(tab);
+                TabPaneService tabPaneService = new TabPaneService();
+                tabPaneService.createNewTab(connection);
+                CollectorPoolManager collectorPool = new CollectorPoolManager();
+                collectorPool.addAction("Connection succesfull");
             }
         } catch (SQLException e) {
-            error.setText("Access denied");
+            CredentialsObjects.getErrorMessage().setText("Access denied");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-
-    public static void getLabel(Label label) {
-        error = label;
-    }
 
 }

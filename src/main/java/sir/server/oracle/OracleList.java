@@ -1,9 +1,10 @@
 package sir.server.oracle;
 
 import javafx.scene.control.*;
-import sir.server.connection.ActionsCollector;
-import sir.server.connection.ConnectionPool;
-import sir.server.connection.Messages;
+import sir.client.newtabs.NewTabObjects;
+import sir.server.connection.CollectorPoolManager;
+import sir.server.connection.ConnectionPoolManager;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,25 +12,23 @@ import java.sql.Statement;
 
 public class OracleList {
 
-    public static ResultSet resultSet;
-    public static Connection connection;
-    public static ActionsCollector actionsCollector;
+    private static ResultSet resultSet;
+    private static Connection connection;
 
 
     public OracleList() {
-        connection = ConnectionPool.connection;
-        actionsCollector = new ActionsCollector();
+        connection = ConnectionPoolManager.getConnectionFromPool();
     }
 
 
-    public void getList(TreeView<String> list, TableView<Messages> actions) {
+    public void getList() {
         TreeItem<String> databases = new TreeItem<>("Databases");
         TreeItem<String> tables = new TreeItem<>("Tables");
         databases.getChildren().add(tables);
-        list.setRoot(databases);
-        list.setShowRoot(false);
+        NewTabObjects.getList().setRoot(databases);
+        NewTabObjects.getList().setShowRoot(false);
         try {
-            Statement statement = ConnectionPool.connection.createStatement();
+            Statement statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT table_name FROM user_tables ORDER BY table_name");
             while (resultSet.next()) {
                 String db = resultSet.getString(1);
@@ -37,7 +36,7 @@ public class OracleList {
                 tables.getChildren().add(dbItem);
             }
             getTables(databases);
-            actions.setItems(ActionsCollector.collector);
+            NewTabObjects.getTableMessage().setItems(CollectorPoolManager.getCollectorFromPool());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -47,7 +46,7 @@ public class OracleList {
     public void getTables(TreeItem<String> user) {
         TreeItem<String> tables = new TreeItem<>("Other Users");
         try {
-            Statement statement = ConnectionPool.connection.createStatement();
+            Statement statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT username FROM all_users");
             while (resultSet.next()) {
                 String users = resultSet.getString(1);
@@ -56,7 +55,7 @@ public class OracleList {
             }
             user.getChildren().add(tables);
         } catch (SQLException e) {
-
+            System.out.println(e.getMessage());
         }
     }
 }

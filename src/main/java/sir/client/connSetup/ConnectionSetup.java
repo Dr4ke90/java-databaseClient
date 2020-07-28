@@ -1,4 +1,4 @@
-package sir.client;
+package sir.client.connSetup;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

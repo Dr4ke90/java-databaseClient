@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sir.client.AplicationController">
+<AnchorPane prefHeight="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sir.client.newtabs.NewTabController">
    <children>
       <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -26,7 +26,7 @@
                      <items>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <TextField minHeight="30.0" promptText="Search" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0" />
+                              <TextField fx:id="search" minHeight="30.0" prefHeight="30.0" prefWidth="209.0" promptText="Search" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="30.0" />
                               <TreeView fx:id="list" layoutX="24.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
                               <Label layoutX="34.0" layoutY="6.0" minHeight="30.0" minWidth="30.0" text="Navigator" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
@@ -34,6 +34,7 @@
                                  </font>
                               </Label>
                               <Separator layoutX="61.0" layoutY="15.0" prefHeight="3.0" prefWidth="187.0" />
+                              <Button fx:id="refresh" layoutX="196.0" layoutY="33.0" mnemonicParsing="false" onAction="#refresh" prefHeight="30.0" prefWidth="40.0" AnchorPane.leftAnchor="208.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane prefHeight="150.0" prefWidth="248.0">
@@ -84,18 +85,18 @@
                <items>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TabPane fx:id="queryTabPane" minWidth="130.0" prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TabPane minWidth="130.0" prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <tabs>
                             <Tab closable="false" text="Query">
                                  <content>
                                     <AnchorPane fx:id="textAnchor" minHeight="60.0" prefHeight="107.0" prefWidth="296.0">
                                        <children>
-                                          <Button fx:id="newTab" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#createTab" prefHeight="30.0" prefWidth="30.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="newQueryTab" maxWidth="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#newQueryTab" prefHeight="30.0" prefWidth="30.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Arial" size="9.0" />
                                              </font>
                                           </Button>
-                                          <TabPane id="tabPane" fx:id="tabPane" layoutX="49.0" layoutY="-37.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <TabPane id="queryTabPane" fx:id="queryTabPane" layoutX="49.0" layoutY="-37.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                           <Button fx:id="send" layoutX="1.0" layoutY="62.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#send" AnchorPane.topAnchor="32.0">
                                              <font>
                                                 <Font name="Arial" size="9.0" />
