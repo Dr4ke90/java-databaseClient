@@ -21,12 +21,13 @@ public class NewTabObjects {
     private static Button save;
     private static Button newTab;
     private static Button refresh;
+    private static TextField search;
 
 
     public void setObjects(Label dateLabel, TreeView<String> list, TableView<Map<Integer, String>> table,
                            Label tableTitle, Label name, Label host, Label user, TabPane queryTabPane,
                            TableView<Messages> tableMessage, Button send, Button open, Button save,
-                           Button newTab, Button refresh) {
+                           Button newTab, Button refresh, TextField search) {
 
         NewTabObjects.dateLabel = dateLabel;
         NewTabObjects.list = list;
@@ -42,6 +43,7 @@ public class NewTabObjects {
         NewTabObjects.save = save;
         NewTabObjects.newTab = newTab;
         NewTabObjects.refresh = refresh;
+        NewTabObjects.search = search;
     }
 
 
@@ -99,5 +101,9 @@ public class NewTabObjects {
 
     public static Button getRefresh() {
         return refresh;
+    }
+
+    public static TextField getSearch() {
+        return search;
     }
 }

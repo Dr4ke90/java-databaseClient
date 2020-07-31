@@ -2,7 +2,6 @@ package sir.client.newtabs;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import sir.client.contextMenu.RightClickMenu;
 import sir.client.home.ImageController;
 import sir.server.connection.Messages;
 
@@ -38,12 +37,14 @@ public class NewTabController {
     private Button newQueryTab;
     @FXML
     private Button refresh;
+    @FXML
+    private TextField search;
 
 
     public void initialize() {
         NewTabObjects newTabObjects = new NewTabObjects();
         newTabObjects.setObjects(dateLabel,list,table,tableTitle,name,host,user,queryTabPane,tableMessage,
-                send,open,save, newQueryTab, refresh);
+                send,open,save, newQueryTab, refresh, search);
 
         NewTabService newTabService = new NewTabService();
         newTabService.setSchemas();

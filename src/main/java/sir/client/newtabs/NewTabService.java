@@ -5,6 +5,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import sir.client.connSetup.Credentials;
 import sir.client.contextMenu.RightClickMenu;
@@ -22,7 +23,6 @@ import java.util.Date;
 public class NewTabService {
 
 
-
     public void setSchemas() {
         if (Credentials.getJdbc().contains("mysql")) {
             MySqlList mySqlList = new MySqlList();
@@ -35,8 +35,6 @@ public class NewTabService {
             postGresList.getList();
         }
     }
-
-
 
 
     public void setClock() {
@@ -78,10 +76,11 @@ public class NewTabService {
     }
 
 
-    public void setContextMenu () {
+
+
+    public void setContextMenu() {
         NewTabObjects.getList().setContextMenu(RightClickMenu.handleDatabaseMenu());
     }
 
 
-    
 }

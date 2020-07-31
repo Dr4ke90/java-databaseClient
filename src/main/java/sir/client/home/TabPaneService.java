@@ -22,13 +22,13 @@ public class TabPaneService {
     }
 
 
-    public void createNewTab(Connection connection) throws Exception {
+    public void createNewTab(Connection connection) throws Exception{
         Tab tab = new Tab("");
-        addTabToTabPane(tab);
-        setTabName(tab);
         setTabId(tab);
+        setTabName(tab);
         setTabGrafics(tab);
         setOnTabCloseRequest(tab);
+        addTabToTabPane(tab);
         ConnectionPool.getConnectionPool().put(tab.getId(),connection);
         CollectorPool.getCollectorPool().put(tab.getId(), CollectorPoolManager.createNewCollector());
         setTabContent(tab);
@@ -62,7 +62,7 @@ public class TabPaneService {
 
     private void setTabContent(Tab tab) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/aplication.fxml"));
+        Parent parent = fxmlLoader.load(new FileInputStream("src/main/java/sir/fxml/newtab.fxml"));
         tab.setContent(parent);
     }
 
