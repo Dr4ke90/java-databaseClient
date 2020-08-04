@@ -53,10 +53,10 @@ public class NewTabController {
         newTabService.setInfo();
         newTabService.activateMenu();
         newTabService.setContextMenu();
+        newTabService.createQueryTab();
         ImageController imageController = new ImageController();
         imageController.addButtonsImage();
 
-        newQueryTab();
     }
 
 

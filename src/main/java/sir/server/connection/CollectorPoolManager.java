@@ -11,7 +11,7 @@ public class CollectorPoolManager {
 
 
     public static ObservableList<Messages> createNewCollector () {
-         return FXCollections.observableArrayList();
+        return FXCollections.observableArrayList();
     }
 
     public void addAction(String text) {

@@ -33,71 +33,44 @@ public class CredentialsObjects {
         return ip;
     }
 
-    public static void setIp(TextField ip) {
-        CredentialsObjects.ip = ip;
-    }
 
     public static TextField getPort() {
         return port;
     }
 
-    public static void setPort(TextField port) {
-        CredentialsObjects.port = port;
-    }
 
     public static TextField getUser() {
         return user;
     }
 
-    public static void setUser(TextField user) {
-        CredentialsObjects.user = user;
-    }
 
     public static PasswordField getPass() {
         return pass;
     }
 
-    public static void setPass(PasswordField pass) {
-        CredentialsObjects.pass = pass;
-    }
 
     public static TextField getServerName() {
         return serverName;
     }
 
-    public static void setServerName(TextField serverName) {
-        CredentialsObjects.serverName = serverName;
-    }
 
     public static TextField getDatabase() {
         return database;
     }
 
-    public static void setDatabase(TextField database) {
-        CredentialsObjects.database = database;
-    }
 
     public static TextField getDriver() {
         return driver;
     }
 
-    public static void setDriver(TextField driver) {
-        CredentialsObjects.driver = driver;
-    }
 
     public static TextField getSid() {
         return sid;
     }
 
-    public static void setSid(TextField sid) {
-        CredentialsObjects.sid = sid;
-    }
 
     public static Label getErrorMessage() {
         return errorMessage;
     }
 
-    public static void setErrorMessage(Label errorMessage) {
-        CredentialsObjects.errorMessage = errorMessage;
-    }
 }

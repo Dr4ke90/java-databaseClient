@@ -10,6 +10,8 @@ import javafx.util.Duration;
 import sir.client.connSetup.Credentials;
 import sir.client.contextMenu.RightClickMenu;
 import sir.client.home.HomeObjects;
+import sir.client.home.ImageController;
+import sir.server.connection.ConnectionPool;
 import sir.server.connection.ConnectionPoolManager;
 import sir.server.connection.MetaData;
 import sir.server.mysql.MySqlList;
@@ -76,11 +78,22 @@ public class NewTabService {
     }
 
 
-
-
     public void setContextMenu() {
         NewTabObjects.getList().setContextMenu(RightClickMenu.handleDatabaseMenu());
     }
 
 
+    public void createQueryTab() {
+        Tab tab = new Tab("Query");
+        tab.setGraphic(ImageController.addSqlIcon());
+        TextArea textArea = new TextArea();
+        textArea.setId("textArea");
+        textArea.setStyle("-fx-text-fill:green;-fx-font-weight:bold");
+        tab.setContent(textArea);
+        tab.setClosable(NewTabObjects.getQueryTabPane().getTabs().size() >= 1);
+        if (ConnectionPool.getConnectionPool().size() != 0) {
+            NewTabObjects.getQueryTabPane().getTabs().add(tab);
+            NewTabObjects.getQueryTabPane().getSelectionModel().selectLast();
+        }
+    }
 }

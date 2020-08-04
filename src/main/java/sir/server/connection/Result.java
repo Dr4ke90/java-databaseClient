@@ -23,6 +23,7 @@ public class Result {
 
 
     public void setResultOnTable() {
+        Querys.clearTable();
         try {
             TableColumn<Map<Integer, String>, String> tableColumn;
             ObservableList<Map<Integer, String>> alldata = FXCollections.observableArrayList();

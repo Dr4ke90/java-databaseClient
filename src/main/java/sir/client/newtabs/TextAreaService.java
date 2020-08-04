@@ -5,6 +5,7 @@ import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sir.client.home.ImageController;
+import sir.server.connection.ConnectionPool;
 import sir.server.connection.Querys;
 
 import java.io.File;
@@ -15,22 +16,28 @@ import java.util.Scanner;
 
 public class TextAreaService {
 
-    private int tabIndex;
-
 
 
     public void createTab() {
-        tabIndex++;
-        Tab tab = new Tab("Query " + tabIndex);
+        int index = countTabs() + 1;
+        Tab tab = new Tab("Query " + index);
         tab.setGraphic(ImageController.addSqlIcon());
         TextArea textArea = new TextArea();
         textArea.setId("textArea");
         textArea.setStyle("-fx-text-fill:green;-fx-font-weight:bold");
         tab.setContent(textArea);
-        tab.setClosable(NewTabObjects.getQueryTabPane().getTabs().size() >= 1);
-        tab.setOnCloseRequest(event -> tabIndex--);
-        NewTabObjects.getQueryTabPane().getTabs().add(tab);
-        NewTabObjects.getQueryTabPane().getSelectionModel().selectLast();
+        tab.setClosable(SelectedTab.getQueryTabPane().getTabs().size() >= 1);
+        if (ConnectionPool.getConnectionPool().size() != 0) {
+            SelectedTab.getQueryTabPane().getTabs().add(tab);
+            SelectedTab.getQueryTabPane().getSelectionModel().selectLast();
+        }
+    }
+
+
+
+
+    private Integer countTabs() {
+        return SelectedTab.getQueryTabPane().getTabs().size();
     }
 
     public void send() {

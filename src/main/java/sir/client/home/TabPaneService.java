@@ -5,7 +5,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import sir.client.connSetup.Credentials;
+import sir.client.newtabs.NewTabObjects;
+import sir.client.newtabs.SelectedTab;
 import sir.server.connection.*;
 
 import java.io.FileInputStream;
@@ -102,4 +105,7 @@ public class TabPaneService {
     public static Tab getSelectedTab () {
         return HomeObjects.getTabPane().getSelectionModel().getSelectedItem();
     }
+
+
+
 }

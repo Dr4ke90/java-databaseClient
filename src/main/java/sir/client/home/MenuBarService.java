@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.*;
 import sir.client.connSetup.ConnectionSetup;
 import sir.client.newtabs.SelectedTab;
+import sir.server.connection.CollectorPool;
 import sir.server.connection.ConnectionPool;
 import sir.server.connection.ConnectionPoolManager;
 
@@ -29,7 +30,7 @@ public class MenuBarService {
             try {
                 ConnectionPoolManager.getConnectionFromPool().close();
                 ConnectionPool.getConnectionPool().remove(TabPaneService.getSelectedTab().getId());
-                ConnectionPool.getConnectionPool().remove(TabPaneService.getSelectedTab().getId());
+                CollectorPool.getCollectorPool().remove(TabPaneService.getSelectedTab().getId());
                 int selectedTab = HomeObjects.getTabPane().getSelectionModel().getSelectedIndex();
                 HomeObjects.getTabPane().getTabs().remove(selectedTab);
             } catch (SQLException e) {

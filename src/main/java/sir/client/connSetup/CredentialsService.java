@@ -25,7 +25,7 @@ public class CredentialsService {
         if (Credentials.getJdbc().contains("mysql")) {
             MySqlConnection mysql = new MySqlConnection();
             mysql.connect();
-            if (CollectorPoolManager.getCollectorFromPool() != null) {
+            if (ConnectionPoolManager.getConnectionFromPool() != null) {
                 ConnectionSetup.closeStage();
             }
         } else if (Credentials.getJdbc().contains("postgres")) {

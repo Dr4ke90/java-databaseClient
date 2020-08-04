@@ -101,7 +101,6 @@ public class Querys {
     }
 
     public void select() {
-        clearTable();
         try {
             Result.resultSet = statement.executeQuery(query);
             result.setResultOnTable();
@@ -168,9 +167,10 @@ public class Querys {
     public void update() {
         try {
             statement.executeUpdate(query);
-            if (NewTabObjects.getTableTitle().getText().equals(metaData.getTableName()))
+            if (SelectedTab.getTableTitle().getText().equals(metaData.getTableName())) {
                 Result.resultSet = statement.executeQuery("select * from " + metaData.getTableName());
-            result.setResultOnTable();
+                result.setResultOnTable();
+            }
             collectorPoolManager.addAction("Update executate");
         } catch (SQLException e) {
             collectorPoolManager.addAction(e.getMessage());
