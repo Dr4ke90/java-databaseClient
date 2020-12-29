@@ -1,6 +1,5 @@
 package sir.client.connSetup;
 
-import sir.server.connection.CollectorPoolManager;
 import sir.server.connection.ConnectionPoolManager;
 import sir.server.mysql.MySqlConnection;
 import sir.server.oracle.OracleConnection;
@@ -52,6 +51,7 @@ public class CredentialsService {
         CredentialsObjects.getDriver().setDisable(true);
         CredentialsObjects.getSid().setDisable(true);
     }
+
 
 
 }

@@ -17,7 +17,6 @@ import java.util.Scanner;
 public class TextAreaService {
 
 
-
     public void createTab() {
         int index = countTabs() + 1;
         Tab tab = new Tab("Query " + index);
@@ -32,7 +31,6 @@ public class TextAreaService {
             SelectedTab.getQueryTabPane().getSelectionModel().selectLast();
         }
     }
-
 
 
 
